@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { supabase, isSupabaseConfigured } from "./supabaseClient";
+import { getSupabase, getIsSupabaseConfigured } from "./supabaseClient";
 import { Photo, Milestone, FuturePlan } from "./types";
 
 export interface LoveDataPayload {
@@ -21,13 +21,16 @@ const RECORD_ID = "nosso_universo";
  * Throws an error on actual API/network failures.
  */
 export async function fetchLoveData(): Promise<LoveDataPayload | null> {
-  if (!isSupabaseConfigured || !supabase) {
+  const isConfigured = getIsSupabaseConfigured();
+  const client = getSupabase();
+
+  if (!isConfigured || !client) {
     console.log("Supabase is not configured. Using local storage instead.");
     return null;
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from("love_universe")
       .select("photos, milestones, plans, declaration")
       .eq("id", RECORD_ID)
@@ -62,12 +65,15 @@ export async function fetchLoveData(): Promise<LoveDataPayload | null> {
  * Throws an error on API/network failures.
  */
 export async function saveLoveData(payload: LoveDataPayload): Promise<boolean> {
-  if (!isSupabaseConfigured || !supabase) {
+  const isConfigured = getIsSupabaseConfigured();
+  const client = getSupabase();
+
+  if (!isConfigured || !client) {
     return false;
   }
 
   try {
-    const { error } = await supabase
+    const { error } = await client
       .from("love_universe")
       .upsert({
         id: RECORD_ID,

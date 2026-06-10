@@ -16,7 +16,7 @@ import {
   DEFAULT_FUTURE_PLANS, 
   DEFAULT_DECLARATION 
 } from "./data";
-import { isSupabaseConfigured } from "./supabaseClient";
+import { getIsSupabaseConfigured, initializeRuntimeConfig } from "./supabaseClient";
 import { fetchLoveData, saveLoveData, SUPABASE_SQL_SETUP } from "./supabaseService";
 import { 
   Heart, 
@@ -46,6 +46,8 @@ export default function App() {
   const [showPwaTip, setShowPwaTip] = useState(false);
   const [showSupabaseGuide, setShowSupabaseGuide] = useState(false);
   const [copiedSql, setCopiedSql] = useState(false);
+
+  const [isConfigured, setIsConfigured] = useState(getIsSupabaseConfigured());
 
   // States with localStorage support
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -107,6 +109,11 @@ export default function App() {
       currentUrl = currentUrl.split("#")[0];
     }
     setShareUrl(currentUrl);
+
+    // Initial load and config fetch from Express server
+    initializeRuntimeConfig().then((active) => {
+      setIsConfigured(active);
+    });
   }, []);
 
   // Fetch from Supabase on Unlock / Page Load if configured
@@ -116,7 +123,7 @@ export default function App() {
     fallbackPlans?: FuturePlan[], 
     fallbackDeclaration?: string
   ) => {
-    if (!isSupabaseConfigured) return;
+    if (!isConfigured) return;
     setIsSyncing(true);
     try {
       const dbPayload = await fetchLoveData();
@@ -162,7 +169,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (isUnlocked && isSupabaseConfigured) {
+    if (isUnlocked && isConfigured) {
       const savedPhotos = localStorage.getItem("love_album_photos");
       const savedMilestones = localStorage.getItem("love_album_milestones");
       const savedPlans = localStorage.getItem("love_album_plans");
@@ -181,7 +188,7 @@ export default function App() {
   const handleUpdatePhotos = async (updated: Photo[]) => {
     setPhotos(updated);
     localStorage.setItem("love_album_photos", JSON.stringify(updated));
-    if (isSupabaseConfigured) {
+    if (isConfigured) {
       setIsSyncing(true);
       const success = await saveLoveData({
         photos: updated,
@@ -199,7 +206,7 @@ export default function App() {
   const handleUpdateMilestones = async (updated: Milestone[]) => {
     setMilestones(updated);
     localStorage.setItem("love_album_milestones", JSON.stringify(updated));
-    if (isSupabaseConfigured) {
+    if (isConfigured) {
       setIsSyncing(true);
       const success = await saveLoveData({
         photos,
@@ -217,7 +224,7 @@ export default function App() {
   const handleUpdatePlans = async (updated: FuturePlan[]) => {
     setPlans(updated);
     localStorage.setItem("love_album_plans", JSON.stringify(updated));
-    if (isSupabaseConfigured) {
+    if (isConfigured) {
       setIsSyncing(true);
       const success = await saveLoveData({
         photos,
@@ -235,7 +242,7 @@ export default function App() {
   const handleUpdateDeclaration = async (updated: string) => {
     setDeclaration(updated);
     localStorage.setItem("love_album_declaration", updated);
-    if (isSupabaseConfigured) {
+    if (isConfigured) {
       setIsSyncing(true);
       const success = await saveLoveData({
         photos,
@@ -341,7 +348,7 @@ export default function App() {
           <div className="flex items-center gap-2">
             
             {/* Supabase status display */}
-            {isSupabaseConfigured ? (
+            {isConfigured ? (
               <button
                 onClick={() => syncWithSupabase()}
                 disabled={isSyncing}
@@ -452,7 +459,7 @@ export default function App() {
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
         
         {/* Offline notice when Supabase is config but we have an error or offline state */}
-        {isSupabaseConfigured && syncSuccess === false && (
+        {isConfigured && syncSuccess === false && (
           <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-xs text-amber-800 shadow-sm animate-fadeIn max-w-md mx-auto text-left">
             <span>⚠️</span>
             <div>

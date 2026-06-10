@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+
+let currentUrl = "";
+let currentAnonKey = "";
 
 const metaEnv = (import.meta as any).env || {};
-const supabaseUrl = (metaEnv.VITE_SUPABASE_URL || "").trim();
-const supabaseAnonKey = (metaEnv.VITE_SUPABASE_ANON_KEY || "").trim();
+currentUrl = (metaEnv.VITE_SUPABASE_URL || "").trim();
+currentAnonKey = (metaEnv.VITE_SUPABASE_ANON_KEY || "").trim();
 
 const isPlaceholder = (val: string) => {
   const normalized = val.toLowerCase();
@@ -15,26 +18,66 @@ const isPlaceholder = (val: string) => {
     normalized === "" ||
     normalized.includes("sua_url") ||
     normalized.includes("sua_chave") ||
-    normalized.includes("your_") ||
     normalized.includes("your") ||
-    normalized.includes("placeholder") ||
-    normalized.includes("sua_url_do_supabase_aqui") ||
-    normalized.includes("sua_chave_anon_do_supabase_aqui")
+    normalized.includes("placeholder")
   );
 };
 
-// Check if credentials are set, are not placeholders, and have a valid URL format
-export const isSupabaseConfigured = 
-  !!supabaseUrl && 
-  !!supabaseAnonKey && 
-  !isPlaceholder(supabaseUrl) && 
-  !isPlaceholder(supabaseAnonKey) &&
-  (supabaseUrl.startsWith("https://") || supabaseUrl.startsWith("http://"));
+export const checkConfig = (url: string, key: string): boolean => {
+  return (
+    !!url &&
+    !!key &&
+    !isPlaceholder(url) &&
+    !isPlaceholder(key) &&
+    (url.startsWith("https://") || url.startsWith("http://"))
+  );
+};
 
-export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey, {
+// Exports that can be dynamically updated at startup
+export let isSupabaseConfigured = checkConfig(currentUrl, currentAnonKey);
+
+export let supabase: SupabaseClient | null = isSupabaseConfigured
+  ? createClient(currentUrl, currentAnonKey, {
       auth: {
         persistSession: false
       }
     })
   : null;
+
+export function getSupabase(): SupabaseClient | null {
+  return supabase;
+}
+
+export function getIsSupabaseConfigured(): boolean {
+  return isSupabaseConfigured;
+}
+
+/**
+ * Fetches runtime config from the Express server to handle environment secrets configured on Cloud Run.
+ * If config is found, reinits the Supabase client.
+ */
+export async function initializeRuntimeConfig(): Promise<boolean> {
+  try {
+    const res = await fetch("/api/config");
+    if (res.ok) {
+      const data = await res.json();
+      const runtimeUrl = (data.supabaseUrl || "").trim();
+      const runtimeAnonKey = (data.supabaseAnonKey || "").trim();
+
+      if (checkConfig(runtimeUrl, runtimeAnonKey)) {
+        currentUrl = runtimeUrl;
+        currentAnonKey = runtimeAnonKey;
+        isSupabaseConfigured = true;
+        supabase = createClient(currentUrl, currentAnonKey, {
+          auth: {
+            persistSession: false
+          }
+        });
+        return true;
+      }
+    }
+  } catch (err) {
+    console.warn("Express server config fetch failed. Using build-time configuration.", err);
+  }
+  return isSupabaseConfigured;
+}
