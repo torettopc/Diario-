@@ -1,0 +1,41 @@
+Como solicitado, aqui está um guia super simples para você salvar, rodar localmente ou hospedar o seu site romântico na internet.
+
+=======================================================
+❤️ COMO USAR ESTE APLICATIVO ROMÂNTICO (VERSÃO ESTÁTICA) ❤️
+=======================================================
+
+Tudo o que você precisa está dentro do arquivo "index.html". Ele é um arquivo único, autônomo e super otimizado! Ele roda no computador, celular, e pode ser enviado diretamente para quem você ama.
+
+---
+
+📋 OPÇÃO 1: RODAR DIRETO NO SEU COMPUTADOR OU CELULAR
+1. Baixe o arquivo "index.html" deste projeto (você pode copiar todo o código dele).
+2. Dê dois cliques no arquivo "index.html". O site abrirá instantaneamente em qualquer navegador!
+3. Digite a senha: **25122025** para acessar o painel.
+4. Você pode enviar suas fotos reais diretamente pelo botão de "Câmera" de cada card. Elas serão salvas automaticamente e com segurança no navegador do seu celular/computador!
+
+---
+
+🚀 OPÇÃO 2: HOSPEDAR NA INTERNET GRÁTIS (PARA COMPARTILHAR)
+Para que sua namorada/namorado acesse de qualquer lugar pelo link ou pelo QR Code gerado, você pode hospedar o arquivo na nuvem de forma 100% gratuita em menos de 2 minutos:
+
+No Netlify (O mais rápido e fácil):
+1. Acesse o site: https://www.netlify.com/ e crie uma conta gratuita.
+2. Acesse a aba "Sites" e arraste a pasta "site_romantico" (ou apenas o arquivo "index.html") para a área indicada de upload.
+3. Pronto! Ele gerará um link público na hora. Você pode personalizar o nome do link nas configurações do Netlify.
+
+No Vercel:
+1. Acesse https://vercel.com/ e faça o upload do arquivo index.html.
+
+---
+
+📸 COMO ADICIONAR SUAS FOTOS PERMANENTES NO CÓDIGO
+Se em vez de fazer upload pelo próprio aplicativo você quiser que as fotos já venham salvas direto no código ao abrir o site:
+1. Crie uma pasta chamada "fotos" no mesmo local do "index.html".
+2. Salve suas fotos lá com nomes simples, por exemplo: "foto1.jpg", "foto2.jpg", etc.
+3. Abra o arquivo "index.html" em um editor de texto (como o Bloco de Notas ou VS Code).
+4. Procure pela palavra "DEFAULT_PHOTOS" no código.
+5. Substitua as URLs do Unsplash (que começam com "https://images.unsplash.com...") pelos caminhos locais das suas fotos, como: "fotos/foto1.jpg".
+6. Salve o arquivo e pronto! O site abrirá com as fotos locais selecionadas por padrão.
+
+Aproveite este lindo presente! Ele foi feito com muito carinho para eternizar o amor de vocês. 💕

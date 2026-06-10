@@ -1,0 +1,6 @@
+{
+  "name": "Nosso Amor - 25122025",
+  "description": "Um diário de amor eterno com álbum de fotos, história, planos e declarações.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

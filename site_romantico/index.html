@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Nosso Universo de Amor 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Fontes Românticas e Modernas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+            handwritten: ['Dancing Script', 'cursive'],
+          },
+          colors: {
+            rose: {
+              50: '#fdf2f4',
+              100: '#fce7ec',
+              200: '#fbcacf',
+              300: '#f7a0a6',
+              400: '#f26d78',
+              500: '#e84558',
+              600: '#d1223a',
+              700: '#b0152b',
+              800: '#921326',
+              900: '#7b1323',
+              950: '#45050f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.6;
+      }
+      50% {
+        transform: translateY(-25px) scale(1.15);
+        opacity: 1;
+      }
+    }
+    @keyframes pulse-slow {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-float-slow {
+      animation: float 6s ease-in-out infinite;
+    }
+    .animate-pulse-slow {
+      animation: pulse-slow 3.2s ease-in-out infinite;
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    html, body {
+      background-color: #fdf2f4; /* rose-50 */
+      color: #1e1b1c;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    /* Estilo customizado para scrollbar romântica */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fce7ec;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #f26d78;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e84558;
+    }
+  </style>
+
+  <!-- Desenvolvimento React, ReactDOM e Babel local via unpkg CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <!-- Script da aplicação compilada em tempo real com Babel -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ÍCONES SVG PERSONALIZADOS E LEVES PARA FUNCIONAMENTO 100% OFFLINE
+    const HeartIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+      </svg>
+    );
+
+    const CameraIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+        <circle cx="12" cy="13" r="3"/>
+      </svg>
+    );
+
+    const ClockIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+    );
+
+    const CalendarIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
+      </svg>
+    );
+
+    const EditIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+      </svg>
+    );
+
+    const CheckIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    );
+
+    const LockIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    );
+
+    const ChevronLeftIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+    );
+
+    const ChevronRightIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="m9 18 6-6-6-6"/>
+      </svg>
+    );
+
+    const TrashIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+      </svg>
+    );
+
+    const LogOutIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>
+      </svg>
+    );
+
+    const CopyIcon = ({ className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+      </svg>
+    );
+
+    // DADOS INICIAIS DA NOSSA HISTÓRIA PRONTOS NO APP
+    const DEFAULT_PHOTOS = [
+      {
+        id: "photo_1",
+        title: "Nossa primeira foto juntos ❤️",
+        caption: "No carro, vestindo o manto do Flamengo, dividindo sorrisos e a nossa paixão.",
+        defaultImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Foto de vocês no carro, sorrindo felizes vestindo a camisa do Flamengo."
+      },
+      {
+        id: "photo_2",
+        title: "Cumplicidade Sem Palavras 🖤🤍",
+        caption: "O preto e branco que ressalta a nossa sintonia em cada singelo olhar de carinho.",
+        defaultImage: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Foto em preto e branco dela sorrindo meiga encostada no seu peito."
+      },
+      {
+        id: "photo_3",
+        title: "Amor que vai além do beijo ❤️",
+        caption: "Um instante paralisado no tempo, de pura paixão e entrega de nós dois.",
+        defaultImage: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Mirror selfie apaixonada de vocês dois se beijando no chuveiro."
+      },
+      {
+        id: "photo_4",
+        title: "No Show do Fabinho 🎵",
+        caption: "A nossa trilha sonora tocando ao vivo e o coração batendo no mesmo compasso.",
+        defaultImage: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Foto ou vídeo de vocês cantando e se beijando no meio do show."
+      },
+      {
+        id: "photo_5",
+        title: "Chamego No Elevador 🛗",
+        caption: "Aqueles flagras espelhados e fofos que nos fazem sorrir o dia inteiro.",
+        defaultImage: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Mirror selfie dele beijando sua bochecha espontaneamente no elevador."
+      },
+      {
+        id: "photo_6",
+        title: "Nossa Sintonia de Verão ☀️",
+        caption: "Sol, calor, cumplicidade e a certeza de que somos o porto seguro um do outro.",
+        defaultImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Mirror selfie do casal de trajes de banho vermelhos em um momento descontraído."
+      },
+      {
+        id: "photo_7",
+        title: "Noite de Brindes 🍷",
+        caption: "Cada risada solta e cada comemoração ao lado de quem faz a minha vida colorida.",
+        defaultImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Selfie de vocês à noite em um bar ou show brindando com copos na mão."
+      },
+      {
+        id: "photo_8",
+        title: "Chamego de Domingo 🛏️",
+        caption: "Preguiça boa e um aconchego quentinho que eu nunca mais quero soltar.",
+        defaultImage: "https://images.unsplash.com/photo-1505489425671-80a11942068e?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Selfie deitada na cama dando um beijo carinhoso na bochecha dele."
+      },
+      {
+        id: "photo_9",
+        title: "Iluminados Pelo Sol 🌻",
+        caption: "O dia brilha mais forte quando você sorri de volta para mim.",
+        defaultImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Foto ensolarada de vocês bem colados ao ar livre com sorrisos radiantes."
+      },
+      {
+        id: "photo_10",
+        title: "Momentos Que Marcam 🥂",
+        caption: "Não importa onde, o que importa é estarmos sintonizados no mesmo carinho.",
+        defaultImage: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&q=80&w=600",
+        placementHint: "Selfie em um restaurante ou mesa celebrando mais um momento leve."
+      }
+    ];
+
+    const DEFAULT_MILESTONES = [
+      {
+        id: "m_1",
+        date: "14/11/2025",
+        title: "O Primeiro Encontro",
+        description: "O dia em que nossos caminhos se cruzaram pela primeira vez. Aquele nervosismo gostoso e a certeza de que seria o início de algo inexplicavelmente especial.",
+        iconType: "smile"
+      },
+      {
+        id: "m_2",
+        date: "25/11/2025",
+        title: "O Nosso Primeiro Beijo",
+        description: "O beijo que selou a enorme sintonia que já sentíamos. Foi quando o tempo parou e percebemos que o nosso cantinho era um nos braços do outro.",
+        iconType: "heart"
+      },
+      {
+        id: "m_3",
+        date: "25/12/2025",
+        title: "Pedido oficial de Namoro!",
+        description: "A data de início do namoro: 25 de Dezembro de 2025. O dia de Natal que nos deu o maior presente de todos: o compromisso de nos amarmos, cuidarmos e sonharmos juntos.",
+        iconType: "star"
+      },
+      {
+        id: "m_4",
+        date: "14/02/2026",
+        title: "Nossa Primeira Viagem",
+        description: "Pegamos a estrada, colecionamos as primeiras playlists conjuntas, lanchamos coisas bobas e voltamos ainda mais apaixonados.",
+        iconType: "map"
+      },
+      {
+        id: "m_5",
+        date: "10/06/2026",
+        title: "Nosso Portal de Amor!",
+        description: "Criamos esse cantinho virtual só nosso, uma cápsula do tempo para guardarmos cada foto, pedaço de história e sorrisos eternos.",
+        iconType: "camera"
+      }
+    ];
+
+    const DEFAULT_FUTURE_PLANS = [
+      {
+        id: "plan_1",
+        text: "Fazer uma viagem longa para a praia nas férias",
+        completed: false,
+        category: "viagem"
+      },
+      {
+        id: "plan_2",
+        text: "Conhecer um restaurante novo e romântico todo mês",
+        completed: true,
+        category: "lazer"
+      },
+      {
+        id: "plan_3",
+        text: "Adotar ou cuidar de um pet juntos no futuro",
+        completed: false,
+        category: "casa"
+      },
+      {
+        id: "plan_4",
+        text: "Assistir a um belo nascer do sol abraçados",
+        completed: false,
+        category: "lazer"
+      },
+      {
+        id: "plan_5",
+        text: "Montar nosso próprio cantinho decorado com as nossas fotos",
+        completed: false,
+        category: "casa"
+      },
+      {
+        id: "plan_6",
+        text: "Aprender uma receita gourmet juntos na cozinha",
+        completed: true,
+        category: "lazer"
+      }
+    ];
+
+    const DEFAULT_DECLARATION = `Meu amor,
+
+Desde o dia 25/12/2025, a minha vida ganhou cores muito mais vibrantes e o meu coração encontrou um porto seguro de pura cumplicidade. Olhar para cada foto nossa é lembrar da leveza do teu sorriso, do aconchego do teu abraço e do carinho incomparável que dividimos em cada momento juntos.
+
+Você é a pessoa que transforma os dias mais simples em memórias eternas. Amo nossa sintonia, amo como vibramos juntos pelo nosso Flamengo, amo o seu abraço sob a água, o beijo roubado no elevador e todo e qualquer instante no qual nossos olhares se encontram.
+
+Prometo cuidar de você, caminhar ao seu lado nos momentos fáceis e difíceis, e continuar construindo uma história linda e cheia de respeito. Esse aplicativo é apenas um pedacinho físico do infinito que quero viver com você.
+
+Com todo o amor do mundo, para sempre,
+Seu amor. ❤️`;
+
+    // -----------------------------------------------------
+    // COMPONENTE: TELA DE ACESSO (Bloqueada por senha)
+    // -----------------------------------------------------
+    function AccessScreen({ onUnlock }) {
+      const [password, setPassword] = useState("");
+      const [errorMsg, setErrorMsg] = useState("");
+      const [isShake, setIsShake] = useState(false);
+
+      const backgroundHearts = [
+        { left: "10%", top: "15%", delay: "0s", size: "1.5rem" },
+        { left: "85%", top: "10%", delay: "1.5s", size: "2rem" },
+        { left: "45%", top: "8%", delay: "3s", size: "1rem" },
+        { left: "75%", top: "80%", delay: "2s", size: "1.8rem" },
+        { left: "15%", top: "75%", delay: "4s", size: "1.2rem" },
+        { left: "80%", top: "45%", delay: "0.5s", size: "1rem" },
+      ];
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const correctPassword = "25122025";
+        if (password.trim() === correctPassword) {
+          onUnlock();
+        } else {
+          setErrorMsg("Hum... essa não é a nossa data especial. Pense com carinho! 🥺💕");
+          setIsShake(true);
+          setTimeout(() => setIsShake(false), 500);
+        }
+      };
+
+      return (
+        <div className="min-h-screen relative overflow-hidden bg-gradient-to-tr from-rose-50 via-rose-100 to-rose-50 flex flex-col justify-center items-center px-4 py-8">
+          {backgroundHearts.map((h, idx) => (
+            <div
+              key={idx}
+              className="absolute text-rose-300 animate-float-slow pointer-events-none opacity-40 text-lg"
+              style={{
+                left: h.left,
+                top: h.top,
+                animationDelay: h.delay,
+                fontSize: h.size,
+              }}
+            >
+              ❤️
+            </div>
+          ))}
+
+          <div
+            className={`w-full max-w-sm bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-rose-100 text-center transition-all duration-300 ${
+              isShake ? "animate-[shake_0.5s_ease-in-out]" : ""
+            }`}
+            style={isShake ? { animation: 'float 0.4s ease' } : {}}
+          >
+            <div className="flex justify-center mb-5">
+              <div className="relative bg-rose-100 text-rose-500 p-4 rounded-full animate-pulse-slow">
+                <HeartIcon className="w-8 h-8 fill-rose-400 stroke-rose-500" />
+              </div>
+            </div>
+
+            <h1 className="font-serif text-3xl font-bold text-rose-900 tracking-tight mb-2">
+              Nosso Espaço
+            </h1>
+            <p className="font-handwritten text-2xl text-rose-500 mb-6 font-medium">
+              "Onde nossa história é eterna"
+            </p>
+
+            <p className="text-gray-600 text-sm mb-7 leading-relaxed">
+              Para entrar em nosso diário particular, digite a data que mudou nossas vidas (DDMMAAAA):
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errorMsg) setErrorMsg("");
+                  }}
+                  placeholder="Digite a data especial..."
+                  className="w-full bg-rose-50/50 hover:bg-rose-50 border border-rose-200 text-gray-800 rounded-2xl py-4 px-12 text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all font-mono"
+                />
+                <LockIcon className="w-5 h-5 text-rose-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              </div>
+
+              {errorMsg && (
+                <p className="text-rose-600 text-xs font-semibold px-2 py-1.5 bg-rose-50 rounded-lg border border-rose-100 animate-pulse">
+                  {errorMsg}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                className="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-4 px-6 rounded-2xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all hover:shadow-lg active:scale-95"
+              >
+                <HeartIcon className="w-4.5 h-4.5 fill-white stroke-none" />
+                <span>Entrar com Amor</span>
+              </button>
+            </form>
+
+            <div className="mt-8 text-xs text-rose-400/80 italic font-medium">
+              Dica: O dia de Natal que mudou tudo! ❤️
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // -----------------------------------------------------
+    // COMPONENTE: ÁLBUM DE FOTOS
+    // -----------------------------------------------------
+    function PhotoAlbumSection({ photos, onUpdatePhoto }) {
+      const [viewMode, setViewMode] = useState("grid");
+      const [lightboxIndex, setLightboxIndex] = useState(null);
+      const [carouselIndex, setCarouselIndex] = useState(0);
+      const fileInputRef = useRef(null);
+      const [editingCardId, setEditingCardId] = useState(null);
+      const [tempCaption, setTempCaption] = useState("");
+
+      const handleImageUpload = (photoId, file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const MAX_WIDTH = 600;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+              const updated = photos.map((p) => (p.id === photoId ? { ...p, userImage: dataUrl } : p));
+              onUpdatePhoto(updated);
+            }
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      };
+
+      const triggerUpload = (photoId, e) => {
+        if (e) e.stopPropagation();
+        setEditingCardId(photoId);
+        if (fileInputRef.current) fileInputRef.current.click();
+      };
+
+      const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0] && editingCardId) {
+          handleImageUpload(editingCardId, e.target.files[0]);
+        }
+      };
+
+      const startEditingCaption = (photo, e) => {
+        e.stopPropagation();
+        setEditingCardId(photo.id);
+        setTempCaption(photo.caption);
+      };
+
+      const saveCaption = (photoId, e) => {
+        e.stopPropagation();
+        const updated = photos.map((p) => p.id === photoId ? { ...p, caption: tempCaption } : p);
+        onUpdatePhoto(updated);
+        setEditingCardId(null);
+      };
+
+      return (
+        <div className="space-y-6">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+
+          {/* Seletor de Modo */}
+          <div className="flex justify-between items-center bg-white/60 p-1.5 rounded-2xl border border-rose-100 max-w-sm mx-auto shadow-sm">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`flex-1 text-center py-2 px-4 rounded-xl font-semibold text-sm transition-all cursor-pointer ${
+                viewMode === "grid" ? "bg-rose-500 text-white shadow-sm" : "text-rose-600 hover:bg-rose-50/50"
+              }`}
+            >
+              🖼️ Grade
+            </button>
+            <button
+              onClick={() => setViewMode("carousel")}
+              className={`flex-1 text-center py-2 px-4 rounded-xl font-semibold text-sm transition-all cursor-pointer ${
+                viewMode === "carousel" ? "bg-rose-500 text-white shadow-sm" : "text-rose-600 hover:bg-rose-50/50"
+              }`}
+            >
+              Carousel
+            </button>
+          </div>
+
+          <p className="text-center text-xs text-rose-500/80 italic font-medium">
+            ✨ Clique em qualquer foto para ampliar ou envie uma foto real de vocês dois para personalizar!
+          </p>
+
+          {/* MODO GRADE */}
+          {viewMode === "grid" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {photos.map((photo, idx) => (
+                <div
+                  key={photo.id}
+                  className="bg-white rounded-3xl overflow-hidden border border-rose-100/80 shadow-md hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col cursor-pointer group"
+                  onClick={() => setLightboxIndex(idx)}
+                >
+                  <div className="relative aspect-[3/4] bg-rose-50 overflow-hidden">
+                    <img
+                      src={photo.userImage || photo.defaultImage}
+                      alt={photo.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-85" />
+                    
+                    <div className="absolute top-3 right-3">
+                      <button
+                        onClick={(e) => triggerUpload(photo.id, e)}
+                        className="bg-white/95 text-rose-500 p-2 rounded-full shadow-md hover:bg-white transition-colors"
+                        title="Substituir foto"
+                      >
+                        <CameraIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {!photo.userImage && (
+                      <span className="absolute bottom-12 left-4 bg-rose-500/90 text-white text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded">
+                        Ilustração
+                      </span>
+                    )}
+
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <h3 className="font-serif text-base font-bold leading-tight flex items-center gap-1.5">
+                        <HeartIcon className="w-3.5 h-3.5 fill-rose-500 stroke-none animate-pulse-slow" />
+                        {photo.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="p-4 flex-1 flex flex-col justify-between bg-white text-left">
+                    {editingCardId === photo.id ? (
+                      <div className="space-y-2 w-full" onClick={(e) => e.stopPropagation()}>
+                        <textarea
+                          value={tempCaption}
+                          onChange={(e) => setTempCaption(e.target.value)}
+                          className="w-full text-xs text-gray-700 p-2 border border-rose-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-rose-400"
+                          rows={2}
+                        />
+                        <div className="flex justify-end gap-1.5">
+                          <button onClick={() => setEditingCardId(null)} className="px-2 py-1 text-[10px] text-gray-500 rounded">Cancelar</button>
+                          <button onClick={(e) => saveCaption(photo.id, e)} className="px-2 py-1 text-[10px] bg-rose-500 text-white rounded flex items-center gap-1"><CheckIcon className="w-2.5 h-2.5"/> Salvar</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between items-start gap-1">
+                        <p className="text-gray-600 text-xs italic font-serif leading-relaxed">"{photo.caption}"</p>
+                        <button onClick={(e) => startEditingCaption(photo, e)} className="text-gray-400 hover:text-rose-500 p-1 rounded-md hover:bg-rose-50"><EditIcon className="w-3 h-3"/></button>
+                      </div>
+                    )}
+                    <div className="mt-3 pt-2.5 border-t border-rose-50 text-[10px] text-gray-400">
+                      <span className="font-semibold text-rose-400">Sugerido:</span> {photo.placementHint}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* MODO CARROSSEL */}
+          {viewMode === "carousel" && (
+            <div className="relative max-w-sm mx-auto aspect-[3/4.2] bg-white rounded-3xl overflow-hidden border border-rose-100 shadow-lg flex flex-col text-left">
+              <div className="relative flex-1 bg-rose-50 overflow-hidden">
+                <img
+                  src={photos[carouselIndex].userImage || photos[carouselIndex].defaultImage}
+                  alt={photos[carouselIndex].title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-90" />
+
+                <div className="absolute top-4 right-4">
+                  <button
+                    onClick={(e) => triggerUpload(photos[carouselIndex].id, e)}
+                    className="bg-white text-rose-600 p-3 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <CameraIcon className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
+                  <h3 className="font-serif text-xl font-bold">{photos[carouselIndex].title}</h3>
+                  <p className="text-xs font-handwritten text-rose-200">Foto {carouselIndex + 1} de {photos.length}</p>
+                </div>
+
+                <button
+                  onClick={() => setCarouselIndex((carouselIndex - 1 + photos.length) % photos.length)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50"
+                >
+                  <ChevronLeftIcon className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setCarouselIndex((carouselIndex + 1) % photos.length)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white p-2 rounded-full hover:bg-black/50"
+                >
+                  <ChevronRightIcon className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-4 bg-white space-y-1">
+                <p className="font-serif italic text-xs sm:text-sm text-gray-700 text-center">"{photos[carouselIndex].caption}"</p>
+                <p className="text-[10px] text-gray-400 text-center">💡 Dica: {photos[carouselIndex].placementHint}</p>
+              </div>
+            </div>
+          )}
+
+          {/* LIGHTBOX AMPLIAÇÃO */}
+          {lightboxIndex !== null && (
+            <div className="fixed inset-0 bg-black/95 z-50 flex flex-col justify-between p-4" onClick={() => setLightboxIndex(null)}>
+              <div className="flex justify-between items-center text-white p-1">
+                <span className="font-mono text-sm text-rose-300">{lightboxIndex+1} / {photos.length}</span>
+                <div className="flex gap-4">
+                  <button
+                    onClick={(e) => triggerUpload(photos[lightboxIndex].id, e)}
+                    className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full text-xs flex items-center gap-1 text-white"
+                  >
+                    <CameraIcon className="w-3.5 h-3.5" /> Enviar Minha Foto
+                  </button>
+                  <button onClick={() => setLightboxIndex(null)} className="text-white text-xl font-bold px-2">✕</button>
+                </div>
+              </div>
+
+              <div className="flex-1 flex justify-center items-center relative" onClick={(e) => e.stopPropagation()}>
+                <img
+                  src={photos[lightboxIndex].userImage || photos[lightboxIndex].defaultImage}
+                  alt={photos[lightboxIndex].title}
+                  className="max-h-[75vh] max-w-full object-contain rounded-xl"
+                />
+                <button
+                  onClick={(e) => { e.stopPropagation(); setLightboxIndex((lightboxIndex - 1 + photos.length) % photos.length); }}
+                  className="absolute left-2 bg-white/10 text-white p-3 rounded-full hover:bg-white/20"
+                >
+                  <ChevronLeftIcon className="w-6 h-6"/>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setLightboxIndex((lightboxIndex + 1) % photos.length); }}
+                  className="absolute right-2 bg-white/10 text-white p-3 rounded-full hover:bg-white/20"
+                >
+                  <ChevronRightIcon className="w-6 h-6"/>
+                </button>
+              </div>
+
+              <div className="text-center text-white pb-6 px-4 space-y-1">
+                <h4 className="font-serif text-lg font-bold text-rose-200">{photos[lightboxIndex].title}</h4>
+                <p className="text-xs italic text-gray-300">"{photos[lightboxIndex].caption}"</p>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // -----------------------------------------------------
+    // COMPONENTE: CARTA DE DECLARAÇÃO
+    // -----------------------------------------------------
+    function DeclarationSection({ declarationText, onSave }) {
+      const [isEditing, setIsEditing] = useState(false);
+      const [editText, setEditText] = useState(declarationText);
+      const [saveSuccess, setSaveSuccess] = useState(false);
+
+      const handleSave = () => {
+        onSave(editText);
+        setIsEditing(false);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      };
+
+      return (
+        <div className="space-y-6 max-w-2xl mx-auto text-left relative">
+          <div className="bg-white/90 rounded-3xl shadow-xl border border-rose-100 overflow-hidden relative">
+            <div className="bg-gradient-to-r from-rose-400 to-rose-300 h-2 w-full" />
+            
+            <div className="p-6 sm:p-10 relative">
+              <div className="absolute right-6 top-8 w-12 h-12 border border-dashed border-rose-300 rounded-full flex items-center justify-center text-rose-400 font-serif text-xs font-bold rotate-12 select-none pointer-events-none">
+                AMOR
+              </div>
+
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center space-x-2">
+                  <HeartIcon className="w-5 h-5 text-rose-500 fill-rose-300" />
+                  <h2 className="font-serif text-xl font-bold text-rose-900">Carta de Amor</h2>
+                </div>
+                
+                {!isEditing ? (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="p-1.5 hover:bg-rose-50 rounded-lg text-rose-500 flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+                  >
+                    <EditIcon className="w-4 h-4" />
+                    <span>Editar Carta</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSave}
+                    className="bg-rose-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer"
+                  >
+                    <CheckIcon className="w-3.5 h-3.5" />
+                    <span>Salvar</span>
+                  </button>
+                )}
+              </div>
+
+              {isEditing ? (
+                <div className="space-y-4">
+                  <textarea
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    className="w-full min-h-[280px] border border-rose-200 p-4 rounded-xl text-sm leading-relaxed focus:ring-2 focus:ring-rose-400 focus:outline-none"
+                    rows={10}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button onClick={() => { setEditText(declarationText); setIsEditing(false); }} className="px-4 py-2 border border-gray-200 text-gray-500 rounded-xl text-xs cursor-pointer">Cancelar</button>
+                    <button onClick={handleSave} className="px-4 py-2 bg-rose-500 text-white rounded-xl text-xs font-bold cursor-pointer">Salvar Alterações</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="font-handwritten text-[24px] sm:text-[27px] leading-relaxed text-rose-950 whitespace-pre-wrap">
+                  {declarationText}
+                </div>
+              )}
+
+              {saveSuccess && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-rose-600 text-white px-4 py-2 rounded-full text-xs font-bold animate-bounce flex items-center gap-1">
+                  <HeartIcon className="w-3.5 h-3.5 fill-white stroke-none" />
+                  Eternizado nas memórias!
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // -----------------------------------------------------
+    // COMPONENTE: HISTÓRIA (Cápsula do tempo)
+    // -----------------------------------------------------
+    function TimelineSection({ milestones, onUpdateMilestones }) {
+      const [isAdding, setIsAdding] = useState(false);
+      const [date, setDate] = useState("");
+      const [title, setTitle] = useState("");
+      const [desc, setDesc] = useState("");
+
+      const handleAdd = (e) => {
+        e.preventDefault();
+        if (!date || !title || !desc) return;
+        const added = {
+          id: "m_static_" + Date.now().toString(),
+          date,
+          title,
+          description: desc,
+          iconType: "heart"
+        };
+        onUpdateMilestones([...milestones, added]);
+        setIsAdding(false);
+        setDate(""); setTitle(""); setDesc("");
+      };
+
+      const handleDelete = (id) => {
+        if (confirm("Quer mesmo apagar essa linda lembrança? 🥺")) {
+          onUpdateMilestones(milestones.filter(m => m.id !== id));
+        }
+      };
+
+      return (
+        <div className="space-y-8 max-w-xl mx-auto py-2 text-left">
+          <div className="text-center space-y-1.5">
+            <h3 className="font-serif text-2xl font-bold text-rose-900">Nossos Capítulos Secretos</h3>
+            <p className="text-xs text-gray-500 italic">Cada passo, conquista e beijo marcados para sempre</p>
+          </div>
+
+          {!isAdding ? (
+            <div className="flex justify-center">
+              <button onClick={() => setIsAdding(true)} className="bg-rose-500 text-white font-bold px-4 py-2 rounded-full text-xs flex items-center gap-1 shadow hover:scale-105 transition-all cursor-pointer">
+                ➕ Adicionar Novo Capítulo
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleAdd} className="bg-white p-5 rounded-2xl border border-rose-100 shadow-sm space-y-3">
+              <div className="flex justify-between items-center pb-2 border-b border-rose-50">
+                <span className="font-serif font-bold text-rose-800 text-xs">Novo Momento</span>
+                <button type="button" onClick={() => setIsAdding(false)} className="text-gray-400 hover:text-black">✕</button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" placeholder="Data (Ex: 25/12/2025)" value={date} onChange={e => setDate(e.target.value)} className="text-xs p-2.5 border rounded-lg" required />
+                <input type="text" placeholder="Título (Ex: Viagem romântica)" value={title} onChange={e => setTitle(e.target.value)} className="text-xs p-2.5 border rounded-lg" required />
+              </div>
+              <textarea placeholder="Fale sobre o que tornou esse dia inesquecível..." value={desc} onChange={e => setDesc(e.target.value)} className="text-xs p-2.5 border rounded-lg w-full" rows={3} required />
+              <div className="flex justify-end gap-1.5 pt-1">
+                <button type="button" onClick={() => setIsAdding(false)} className="px-3 py-1.5 border rounded text-xs">Cancelar</button>
+                <button type="submit" className="px-3 py-1.5 bg-rose-500 text-white font-bold rounded text-xs shadow">Registrar</button>
+              </div>
+            </form>
+          )}
+
+          <div className="relative border-l-2 border-rose-100 pl-6 ml-4 space-y-6">
+            {milestones.map((m) => (
+              <div key={m.id} className="relative group">
+                <div className="absolute -left-[35px] top-1 bg-white border-2 border-rose-200 p-1.5 rounded-full shadow-sm">
+                  <HeartIcon className="w-3.5 h-3.5 fill-rose-500 stroke-none" />
+                </div>
+                <div className="bg-white/80 border border-rose-100 p-4.5 rounded-xl hover:shadow-md transition shadow-sm">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-[10px] font-bold text-rose-600 bg-rose-550 px-2 py-0.5 rounded-full border border-rose-150 font-mono flex items-center gap-1 bg-rose-50 leading-none">
+                      <CalendarIcon className="w-3 h-3 text-rose-500" /> {m.date}
+                    </span>
+                    <button onClick={() => handleDelete(m.id)} className="text-gray-300 hover:text-rose-600 transition-colors"><TrashIcon className="w-3.5 h-3.5" /></button>
+                  </div>
+                  <h4 className="font-serif text-sm font-bold text-rose-950 mb-1">{m.title}</h4>
+                  <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-wrap">{m.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // -----------------------------------------------------
+    // COMPONENTE: PLANOS FUTUROS (Sonhos)
+    // -----------------------------------------------------
+    function PlansSection({ plans, onUpdatePlans }) {
+      const [newText, setNewText] = useState("");
+
+      const handleToggle = (id) => {
+        const updated = plans.map(p => p.id === id ? { ...p, completed: !p.completed } : p);
+        onUpdatePlans(updated);
+      };
+
+      const handleAdd = (e) => {
+        e.preventDefault();
+        if (!newText.trim()) return;
+        const added = {
+          id: "plan_static_" + Date.now().toString(),
+          text: newText.trim(),
+          completed: false,
+          category: "lazer"
+        };
+        onUpdatePlans([...plans, added]);
+        setNewText("");
+      };
+
+      const handleDelete = (id, e) => {
+        e.stopPropagation();
+        onUpdatePlans(plans.filter(p => p.id !== id));
+      };
+
+      const compCount = plans.filter(p => p.completed).length;
+      const progress = plans.length > 0 ? Math.round((compCount / plans.length) * 100) : 0;
+
+      return (
+        <div className="space-y-6 max-w-xl mx-auto py-2 text-left">
+          <div className="bg-white/90 p-5 rounded-2xl border border-rose-100 shadow-sm space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="font-serif text-lg font-bold text-rose-900 flex items-center gap-1.5">💫 Nosso Baú de Desejos</h3>
+              <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border">{compCount} de {plans.length} realizados</span>
+            </div>
+            
+            <div className="space-y-1">
+              <div className="flex justify-between text-[10px] text-gray-500 px-0.5">
+                <span>Sonhos compartilhados concluídos</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="w-full bg-rose-50 rounded-full h-2.5 border overflow-hidden">
+                <div className="bg-gradient-to-r from-rose-400 to-rose-500 h-full transition-all duration-300" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2.5">
+            {plans.map((p) => (
+              <div
+                key={p.id}
+                onClick={() => handleToggle(p.id)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition cursor-pointer ${
+                  p.completed ? "bg-rose-50/40 border-rose-100 opacity-70" : "bg-white border-rose-100 hover:border-rose-300"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-0.5 rounded-md ${p.completed ? 'bg-rose-550 border-rose-500 text-rose-500' : 'w-4 h-4 rounded border-2 border-rose-200'}`}>
+                    {p.completed && <CheckIcon className="w-3.5 h-3.5 text-rose-600 font-bold" />}
+                  </div>
+                  <span className={`text-xs sm:text-sm font-medium ${p.completed ? 'line-through text-gray-400 font-normal' : 'text-gray-800'}`}>{p.text}</span>
+                </div>
+                <button onClick={(e) => handleDelete(p.id, e)} className="text-gray-300 hover:text-rose-600 p-1"><TrashIcon className="w-3.5 h-3.5"/></button>
+              </div>
+            ))}
+          </div>
+
+          <form onSubmit={handleAdd} className="bg-white p-4 rounded-xl border border-rose-100 flex gap-2">
+            <input
+              type="text"
+              value={newText}
+              onChange={e => setNewText(e.target.value)}
+              placeholder="Escreva mais um plano fofo nosso..."
+              className="flex-1 text-xs px-3 py-2.5 border rounded-lg focus:outline-none"
+              required
+            />
+            <button type="submit" className="bg-rose-500 text-white font-bold text-xs px-4 py-2 rounded-lg cursor-pointer hover:bg-rose-600 transition shadow">Adicionar</button>
+          </form>
+        </div>
+      );
+    }
+
+    // -----------------------------------------------------
+    // COMPONENTE PRINCIPAL (MAIN WRAPPER)
+    // -----------------------------------------------------
+    function MainApp() {
+      const [isUnlocked, setIsUnlocked] = useState(false);
+      const [activeTab, setActiveTab] = useState("album");
+      const [shareUrl, setShareUrl] = useState("");
+      const [copied, setCopied] = useState(false);
+
+      const [photos, setPhotos] = useState(DEFAULT_PHOTOS);
+      const [milestones, setMilestones] = useState(DEFAULT_MILESTONES);
+      const [plans, setPlans] = useState(DEFAULT_FUTURE_PLANS);
+      const [declaration, setDeclaration] = useState(DEFAULT_DECLARATION);
+
+      // Relógio Contador de Tempo Juntos
+      const [time, setTime] = useState({ d: 0, h: 0, m: 0, s: 0 });
+
+      useEffect(() => {
+        // 1. Carrega dados salvos locais se houver
+        const savedUnlock = localStorage.getItem("isLoveUnlocked_static");
+        if (savedUnlock === "true") setIsUnlocked(true);
+
+        const savedPhotos = localStorage.getItem("love_photos");
+        if (savedPhotos) setPhotos(JSON.parse(savedPhotos));
+
+        const savedMilestones = localStorage.getItem("love_milestones");
+        if (savedMilestones) setMilestones(JSON.parse(savedMilestones));
+
+        const savedPlans = localStorage.getItem("love_plans");
+        if (savedPlans) setPlans(JSON.parse(savedPlans));
+
+        const savedDecl = localStorage.getItem("love_declaration");
+        if (savedDecl) setDeclaration(savedDecl);
+
+        // Define link de compartilhamento
+        setShareUrl(window.location.href);
+      }, []);
+
+      useEffect(() => {
+        const annDate = new Date("2025-12-25T00:00:00");
+        const interval = setInterval(() => {
+          const diff = Date.now() - annDate.getTime();
+          if (diff > 0) {
+            setTime({
+              d: Math.floor(diff / (1000 * 60 * 60 * 24)),
+              h: Math.floor((diff / (1000 * 60 * 60)) % 24),
+              m: Math.floor((diff / (1000 * 60)) % 60),
+              s: Math.floor((diff / 1000) % 60)
+            });
+          }
+        }, 1000);
+        return () => clearInterval(interval);
+      }, []);
+
+      const savePhotos = (updated) => { setPhotos(updated); localStorage.setItem("love_photos", JSON.stringify(updated)); };
+      const saveMilestones = (updated) => { setMilestones(updated); localStorage.setItem("love_milestones", JSON.stringify(updated)); };
+      const savePlans = (updated) => { setPlans(updated); localStorage.setItem("love_plans", JSON.stringify(updated)); };
+      const saveDecl = (text) => { setDeclaration(text); localStorage.setItem("love_declaration", text); };
+
+      const handleUnlock = () => { setIsUnlocked(true); localStorage.setItem("isLoveUnlocked_static", "true"); };
+      const handleLock = () => { if (confirm("Deseja sair do diário secreto? ❤️")) { setIsUnlocked(false); localStorage.removeItem("isLoveUnlocked_static"); } };
+
+      const copyLink = () => {
+        navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      if (!isUnlocked) {
+        return <AccessScreen onUnlock={handleUnlock} />;
+      }
+
+      return (
+        <div className="min-h-screen bg-rose-50/50 flex flex-col justify-between selection:bg-rose-200">
+          {/* HEADER COM RElÓGIO CONTINUO */}
+          <header className="bg-white/80 backdrop-blur sticky top-0 z-40 border-b border-rose-100 py-3 px-5 shadow-sm">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-rose-100 text-rose-500 p-2 rounded-full">
+                  <HeartIcon className="w-5 h-5 fill-rose-400 stroke-none animate-pulse-slow" />
+                </div>
+                <div className="text-left">
+                  <h1 className="font-serif text-base sm:text-lg font-bold text-rose-900 leading-tight">Nosso Universo</h1>
+                  <p className="font-handwritten text-base leading-none text-rose-500">Desde 25/12/2025</p>
+                </div>
+              </div>
+
+              {/* Relógio Compacto */}
+              <div className="flex items-center gap-1.5 bg-rose-50/70 border border-rose-100/80 px-3 py-1.5 rounded-xl text-xs font-mono font-bold text-rose-950">
+                <ClockIcon className="w-4 h-4 text-rose-500" />
+                <span>{time.d} Dias</span>
+                <span className="text-[10px] text-rose-400 px-0.5">e</span>
+                <span>{time.h}h</span>
+                <span>{time.m}m</span>
+                <span>{time.s}s</span>
+                <span className="text-[9px] text-rose-600 bg-rose-100/50 px-1 py-0.5 rounded ml-1 animate-pulse uppercase leading-none">Juntos</span>
+              </div>
+
+              <button onClick={handleLock} className="text-gray-400 hover:text-rose-500 p-1 rounded-full"><LogOutIcon className="w-4.5 h-4.5"/></button>
+            </div>
+          </header>
+
+          {/* MENU DE ABAS */}
+          <nav className="bg-white border-b border-rose-50 py-2.5 shadow-sm sticky top-[61px] sm:top-[63px] z-30">
+            <div className="max-w-xs sm:max-w-md mx-auto grid grid-cols-4 gap-1 select-none">
+              {[
+                { id: "album", label: "Álbum", emoji: "📸" },
+                { id: "declaration", label: "Carta", emoji: "💌" },
+                { id: "history", label: "História", emoji: "📖" },
+                { id: "plans", label: "Planos", emoji: "✨" }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex flex-col items-center justify-center py-2 rounded-xl transition cursor-pointer ${
+                    activeTab === tab.id ? 'bg-rose-50 text-rose-600 font-bold scale-[1.03]' : 'text-gray-400 hover:text-rose-500'
+                  }`}
+                >
+                  <span className="text-lg sm:text-xl mb-0.5">{tab.emoji}</span>
+                  <span className="text-[10px] sm:text-xs">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </nav>
+
+          {/* CONTEÚDO PRINCIPAL COM TRANSIÇÕES */}
+          <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
+            {activeTab === "album" && (
+              <div className="space-y-4 animate-fadeIn">
+                <div className="text-center space-y-1.5 mb-2">
+                  <h2 className="font-serif text-2xl sm:text-3xl font-bold text-rose-950">Nosso Álbum de Recordações</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 italic max-w-sm mx-auto">Espaço dedicado para momentos especiais que contam nossa história!</p>
+                </div>
+                <PhotoAlbumSection photos={photos} onUpdatePhoto={savePhotos} />
+              </div>
+            )}
+
+            {activeTab === "declaration" && (
+              <div className="animate-fadeIn">
+                <DeclarationSection declarationText={declaration} onSave={saveDecl} />
+              </div>
+            )}
+
+            {activeTab === "history" && (
+              <div className="animate-fadeIn">
+                <TimelineSection milestones={milestones} onUpdateMilestones={saveMilestones} />
+              </div>
+            )}
+
+            {activeTab === "plans" && (
+              <div className="animate-fadeIn">
+                <PlansSection plans={plans} onUpdatePlans={savePlans} />
+              </div>
+            )}
+          </main>
+
+          {/* RODAPÉ E FERRAMENTAS */}
+          <footer className="bg-white border-t border-rose-100 py-10 px-5 text-center mt-12">
+            <div className="max-w-md mx-auto space-y-6">
+              
+              <div className="bg-rose-50/50 p-5 rounded-2xl border border-rose-100 flex flex-col items-center gap-4">
+                <div className="space-y-0.5">
+                  <h4 className="font-serif font-bold text-rose-950 text-sm">Compartilhar Nosso Link</h4>
+                  <p className="text-[10px] text-gray-400">Escaneie o QR Code abaixo para abrir direto do celular!</p>
+                </div>
+
+                {shareUrl && (
+                  <div className="bg-white p-3 rounded-xl shadow-md inline-block">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=9F1239&bgcolor=FFFFFF&data=${encodeURIComponent(shareUrl)}`}
+                      alt="QR Code"
+                      className="w-32 h-32 object-contain"
+                    />
+                  </div>
+                )}
+
+                <div className="w-full flex border border-rose-200 rounded-lg overflow-hidden bg-white">
+                  <span className="text-[10px] text-gray-400 select-all truncate flex-1 leading-8 pl-3 text-left self-center">{shareUrl}</span>
+                  <button onClick={copyLink} className="bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs px-4 py-2 flex items-center gap-1 cursor-pointer">
+                    {copied ? <CheckIcon className="w-3 h-3 stroke-[3]" /> : <CopyIcon className="w-3 h-3" />}
+                    <span>{copied ? 'Copiado!' : 'Copiar'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400 leading-relaxed">Este site estático armazena seus uploads e edições localmente com segurança máxima.</p>
+                <p className="text-[10px] text-rose-400 font-semibold">Feito para blindar e recordar o nosso amor para sempre. ❤️</p>
+              </div>
+
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<MainApp />, document.getElementById("root"));
+  </script>
+</body>
+</html>
