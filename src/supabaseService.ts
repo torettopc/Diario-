@@ -17,7 +17,8 @@ const RECORD_ID = "nosso_universo";
 
 /**
  * Fetches the shared romantic data from Supabase.
- * Returns null if Supabase is not configured or if the record doesn't exist.
+ * Returns null if the record doesn't exist yet on a healthy database connection.
+ * Throws an error on actual API/network failures.
  */
 export async function fetchLoveData(): Promise<LoveDataPayload | null> {
   if (!isSupabaseConfigured || !supabase) {
@@ -33,8 +34,11 @@ export async function fetchLoveData(): Promise<LoveDataPayload | null> {
       .maybeSingle();
 
     if (error) {
-      console.error("Error fetching data from Supabase:", error.message);
-      return null;
+      // Check if it is a standard empty rows response or similar (PostgREST single response error)
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw new Error(`Database query error: ${error.message} (Code: ${error.code})`);
     }
 
     if (data) {
@@ -45,8 +49,9 @@ export async function fetchLoveData(): Promise<LoveDataPayload | null> {
         declaration: data.declaration as string,
       };
     }
-  } catch (err) {
-    console.error("Failed to fetch love data:", err);
+  } catch (err: any) {
+    console.error("Failed to fetch love data from Supabase:", err);
+    throw err;
   }
 
   return null;
@@ -54,6 +59,7 @@ export async function fetchLoveData(): Promise<LoveDataPayload | null> {
 
 /**
  * Saves or updates the love data payload in Supabase.
+ * Throws an error on API/network failures.
  */
 export async function saveLoveData(payload: LoveDataPayload): Promise<boolean> {
   if (!isSupabaseConfigured || !supabase) {
@@ -75,14 +81,13 @@ export async function saveLoveData(payload: LoveDataPayload): Promise<boolean> {
       });
 
     if (error) {
-      console.error("Error saving data to Supabase:", error.message);
-      return false;
+      throw new Error(`Error saving data to Supabase: ${error.message} (Code: ${error.code})`);
     }
 
     return true;
-  } catch (err) {
-    console.error("Failed to save love data:", err);
-    return false;
+  } catch (err: any) {
+    console.error("Failed to save love data to Supabase:", err);
+    throw err;
   }
 }
 
