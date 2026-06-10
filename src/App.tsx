@@ -16,7 +16,27 @@ import {
   DEFAULT_FUTURE_PLANS, 
   DEFAULT_DECLARATION 
 } from "./data";
-import { Heart, Globe, Copy, Share2, LogOut, Check, Info, Phone, Calendar, Clock, Smile } from "lucide-react";
+import { isSupabaseConfigured } from "./supabaseClient";
+import { fetchLoveData, saveLoveData, SUPABASE_SQL_SETUP } from "./supabaseService";
+import { 
+  Heart, 
+  Globe, 
+  Copy, 
+  Share2, 
+  LogOut, 
+  Check, 
+  Info, 
+  Phone, 
+  Calendar, 
+  Clock, 
+  Smile, 
+  Cloud, 
+  CloudOff, 
+  Loader2, 
+  Sparkles,
+  Database,
+  X
+} from "lucide-react";
 
 export default function App() {
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -24,12 +44,19 @@ export default function App() {
   const [shareUrl, setShareUrl] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
   const [showPwaTip, setShowPwaTip] = useState(false);
+  const [showSupabaseGuide, setShowSupabaseGuide] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
 
   // States with localStorage support
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [plans, setPlans] = useState<FuturePlan[]>([]);
   const [declaration, setDeclaration] = useState("");
+
+  // Supabase states
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncSuccess, setSyncSuccess] = useState<boolean | null>(null);
+  const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
 
   // Counter clock states
   const [timePassed, setTimePassed] = useState({
@@ -76,32 +103,151 @@ export default function App() {
 
     // 3. Set up sharing link
     let currentUrl = window.location.href;
-    // Strip hashtags or routes if needed
     if (currentUrl.includes("#")) {
       currentUrl = currentUrl.split("#")[0];
     }
     setShareUrl(currentUrl);
   }, []);
 
-  // Sync states to localStorage
-  const handleUpdatePhotos = (updated: Photo[]) => {
+  // Fetch from Supabase on Unlock / Page Load if configured
+  const syncWithSupabase = async (
+    fallbackPhotos?: Photo[], 
+    fallbackMilestones?: Milestone[], 
+    fallbackPlans?: FuturePlan[], 
+    fallbackDeclaration?: string
+  ) => {
+    if (!isSupabaseConfigured) return;
+    setIsSyncing(true);
+    try {
+      const dbPayload = await fetchLoveData();
+      if (dbPayload) {
+        setPhotos(dbPayload.photos);
+        setMilestones(dbPayload.milestones);
+        setPlans(dbPayload.plans);
+        setDeclaration(dbPayload.declaration);
+
+        localStorage.setItem("love_album_photos", JSON.stringify(dbPayload.photos));
+        localStorage.setItem("love_album_milestones", JSON.stringify(dbPayload.milestones));
+        localStorage.setItem("love_album_plans", JSON.stringify(dbPayload.plans));
+        localStorage.setItem("love_album_declaration", dbPayload.declaration);
+        setLastSyncTime(new Date().toLocaleTimeString());
+        setSyncSuccess(true);
+      } else {
+        // First sync or table empty: Push current local values to bootstrap the cloud database
+        const pToSave = fallbackPhotos || photos.length ? photos : DEFAULT_PHOTOS;
+        const mToSave = fallbackMilestones || milestones.length ? milestones : DEFAULT_MILESTONES;
+        const plToSave = fallbackPlans || plans.length ? plans : DEFAULT_FUTURE_PLANS;
+        const dToSave = fallbackDeclaration !== undefined ? fallbackDeclaration : (declaration || DEFAULT_DECLARATION);
+
+        const success = await saveLoveData({
+          photos: pToSave,
+          milestones: mToSave,
+          plans: plToSave,
+          declaration: dToSave
+        });
+        if (success) {
+          setLastSyncTime(new Date().toLocaleTimeString());
+          setSyncSuccess(true);
+        } else {
+          setSyncSuccess(false);
+        }
+      }
+    } catch (err) {
+      console.error("Error connecting with Supabase", err);
+      setSyncSuccess(false);
+    } finally {
+      setIsSyncing(false);
+      setTimeout(() => setSyncSuccess(null), 3500);
+    }
+  };
+
+  useEffect(() => {
+    if (isUnlocked && isSupabaseConfigured) {
+      const savedPhotos = localStorage.getItem("love_album_photos");
+      const savedMilestones = localStorage.getItem("love_album_milestones");
+      const savedPlans = localStorage.getItem("love_album_plans");
+      const savedDecl = localStorage.getItem("love_album_declaration");
+
+      const localPhotos = savedPhotos ? JSON.parse(savedPhotos) : DEFAULT_PHOTOS;
+      const localMilestones = savedMilestones ? JSON.parse(savedMilestones) : DEFAULT_MILESTONES;
+      const localPlans = savedPlans ? JSON.parse(savedPlans) : DEFAULT_FUTURE_PLANS;
+      const localDecl = savedDecl !== null ? savedDecl : DEFAULT_DECLARATION;
+
+      syncWithSupabase(localPhotos, localMilestones, localPlans, localDecl);
+    }
+  }, [isUnlocked]);
+
+  // Sync states to localStorage and Supabase (write-through cache style)
+  const handleUpdatePhotos = async (updated: Photo[]) => {
     setPhotos(updated);
     localStorage.setItem("love_album_photos", JSON.stringify(updated));
+    if (isSupabaseConfigured) {
+      setIsSyncing(true);
+      const success = await saveLoveData({
+        photos: updated,
+        milestones,
+        plans,
+        declaration
+      });
+      setSyncSuccess(success);
+      setIsSyncing(false);
+      setLastSyncTime(new Date().toLocaleTimeString());
+      setTimeout(() => setSyncSuccess(null), 3000);
+    }
   };
 
-  const handleUpdateMilestones = (updated: Milestone[]) => {
+  const handleUpdateMilestones = async (updated: Milestone[]) => {
     setMilestones(updated);
     localStorage.setItem("love_album_milestones", JSON.stringify(updated));
+    if (isSupabaseConfigured) {
+      setIsSyncing(true);
+      const success = await saveLoveData({
+        photos,
+        milestones: updated,
+        plans,
+        declaration
+      });
+      setSyncSuccess(success);
+      setIsSyncing(false);
+      setLastSyncTime(new Date().toLocaleTimeString());
+      setTimeout(() => setSyncSuccess(null), 3000);
+    }
   };
 
-  const handleUpdatePlans = (updated: FuturePlan[]) => {
+  const handleUpdatePlans = async (updated: FuturePlan[]) => {
     setPlans(updated);
     localStorage.setItem("love_album_plans", JSON.stringify(updated));
+    if (isSupabaseConfigured) {
+      setIsSyncing(true);
+      const success = await saveLoveData({
+        photos,
+        milestones,
+        plans: updated,
+        declaration
+      });
+      setSyncSuccess(success);
+      setIsSyncing(false);
+      setLastSyncTime(new Date().toLocaleTimeString());
+      setTimeout(() => setSyncSuccess(null), 3000);
+    }
   };
 
-  const handleUpdateDeclaration = (updated: string) => {
+  const handleUpdateDeclaration = async (updated: string) => {
     setDeclaration(updated);
     localStorage.setItem("love_album_declaration", updated);
+    if (isSupabaseConfigured) {
+      setIsSyncing(true);
+      const success = await saveLoveData({
+        photos,
+        milestones,
+        plans,
+        declaration: updated
+      });
+      setSyncSuccess(success);
+      setIsSyncing(false);
+      setLastSyncTime(new Date().toLocaleTimeString());
+      setTimeout(() => setSyncSuccess(null), 3000);
+    }
   };
 
   // 4. Real-time Love Count Up Clock
@@ -114,12 +260,10 @@ export default function App() {
       const difference = now.getTime() - anniversaryDate.getTime();
 
       if (difference <= 0) {
-        // Fallback for dates before start time or error
         setTimePassed({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         return;
       }
 
-      // Exact mathematical calculation
       const seconds = Math.floor((difference / 1000) % 60);
       const minutes = Math.floor((difference / (1000 * 60)) % 60);
       const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
@@ -149,6 +293,12 @@ export default function App() {
     navigator.clipboard.writeText(shareUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  const copySqlSetup = () => {
+    navigator.clipboard.writeText(SUPABASE_SQL_SETUP);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2500);
   };
 
   if (!isUnlocked) {
@@ -187,14 +337,59 @@ export default function App() {
             </div>
           </div>
 
-          {/* Logout lock */}
-          <button
-            onClick={handleLock}
-            className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-full transition-colors cursor-pointer self-end md:self-auto"
-            title="Bloquear Diário"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          {/* Sync status & settings controller */}
+          <div className="flex items-center gap-2">
+            
+            {/* Supabase status display */}
+            {isSupabaseConfigured ? (
+              <button
+                onClick={() => syncWithSupabase()}
+                disabled={isSyncing}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold select-none cursor-pointer border transition-colors ${
+                  isSyncing
+                    ? "bg-amber-50 text-amber-600 border-amber-200"
+                    : syncSuccess === true
+                    ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                    : syncSuccess === false
+                    ? "bg-rose-50 text-rose-600 border-rose-200"
+                    : "bg-teal-50 hover:bg-teal-100/80 text-teal-700 border-teal-200"
+                }`}
+                title={isSyncing ? "Sincronizando com Supabase..." : "Conexão com Supabase Ativa. Clique para atualizar!"}
+              >
+                {isSyncing ? (
+                  <Loader2 className="w-3 h-3 animate-spin text-amber-500" />
+                ) : syncSuccess === true ? (
+                  <Check className="w-3 h-3 text-emerald-500 stroke-[2.5]" />
+                ) : (
+                  <Cloud className="w-3 h-3 text-teal-500 fill-teal-100/30" />
+                )}
+                <span>
+                  {isSyncing ? "Sincronizando..." : syncSuccess === true ? "Sincronizado" : syncSuccess === false ? "Erro ao salvar" : "Nuvem Ativa"}
+                </span>
+                {lastSyncTime && !isSyncing && (
+                  <span className="text-[9px] opacity-70 hidden sm:inline">({lastSyncTime})</span>
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowSupabaseGuide(true)}
+                className="flex items-center space-x-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100/80 border border-rose-200/50 rounded-full text-xs font-semibold text-rose-700 cursor-pointer transition-colors"
+                title="Supabase inativo. Clique para ver instruções de conexão!"
+              >
+                <CloudOff className="w-3 h-3" />
+                <span>Nuvem Inativa</span>
+              </button>
+            )}
+
+            {/* Logout lock */}
+            <button
+              onClick={handleLock}
+              className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-full transition-colors cursor-pointer"
+              title="Bloquear Diário"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -255,6 +450,18 @@ export default function App() {
 
       {/* 3. DYNAMIC CONTENT CANVAS */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
+        
+        {/* Offline notice when Supabase is config but we have an error or offline state */}
+        {isSupabaseConfigured && syncSuccess === false && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-xs text-amber-800 shadow-sm animate-fadeIn max-w-md mx-auto text-left">
+            <span>⚠️</span>
+            <div>
+              <p className="font-bold">Modo Offline Ativado Temporariamente</p>
+              <p className="opacity-90">Não foi possível conectar à sua nuvem Supabase. Suas alterações estão salvas no celular e sincronizarão assim que a rede voltar!</p>
+            </div>
+          </div>
+        )}
+
         {activeTab === "album" && (
           <div className="space-y-4 animate-fadeIn">
             <div className="text-center space-y-2 mb-4">
@@ -354,13 +561,25 @@ export default function App() {
               </div>
 
               {/* Mobile app install shortcut button trigger */}
-              <button
-                onClick={() => setShowPwaTip(!showPwaTip)}
-                className="inline-flex items-center gap-1.5 text-[11px] text-rose-600 hover:text-rose-700 hover:underline cursor-pointer font-semibold transition"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span>Salvar na tela do celular como App (Instruções)</span>
-              </button>
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mt-4">
+                <button
+                  onClick={() => setShowPwaTip(!showPwaTip)}
+                  className="inline-flex items-center gap-1.5 text-[11px] text-rose-600 hover:text-rose-700 hover:underline cursor-pointer font-semibold transition"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Salvar na tela do celular como App (Instruções)</span>
+                </button>
+
+                <span className="text-rose-200 hidden sm:inline">|</span>
+
+                <button
+                  onClick={() => setShowSupabaseGuide(true)}
+                  className="inline-flex items-center gap-1.5 text-[11px] text-teal-600 hover:text-teal-700 hover:underline cursor-pointer font-semibold transition animate-pulse-slow"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  <span>Configurar Sincronização em Nuvem (Supabase)</span>
+                </button>
+              </div>
 
               {/* Install PWA Tutorial */}
               {showPwaTip && (
@@ -408,6 +627,88 @@ export default function App() {
 
         </div>
       </footer>
+
+      {/* Supabase connection guide custom Modal */}
+      {showSupabaseGuide && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-fadeIn" onClick={() => setShowSupabaseGuide(false)}>
+          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-rose-100 flex flex-col" onClick={(e) => e.stopPropagation()}>
+            {/* Modal header */}
+            <div className="p-6 border-b border-rose-50 flex justify-between items-center bg-rose-50/30">
+              <div className="flex items-center space-x-2">
+                <Database className="w-5 h-5 text-teal-600 animate-pulse-slow" />
+                <h3 className="font-serif text-lg font-bold text-rose-950">Conexão com Nuvem Supabase</h3>
+              </div>
+              <button onClick={() => setShowSupabaseGuide(false)} className="text-gray-400 hover:text-rose-600 p-1.5 hover:bg-rose-50 rounded-full transition-colors cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-5 text-gray-700 text-xs sm:text-sm text-left">
+              <p className="leading-relaxed">
+                Adicione sincronização automática em tempo real ao diário! Com o Supabase ativo, qualquer foto enviada ou texto editado no <strong>celular</strong> aparecerá imediatamente no <strong>computador</strong> (e vice-versa).
+              </p>
+
+              <div className="p-4 bg-teal-50 border border-teal-100 rounded-2xl space-y-2">
+                <p className="font-bold text-teal-900 flex items-center gap-1">
+                  <Sparkles className="w-4 h-4 text-teal-600" />
+                  Benefícios do Supabase Ativo:
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-teal-950 text-xs font-medium">
+                  <li>Sincronização imediata entre múltiplos telefones e computadores.</li>
+                  <li>Dados sempre seguros na nuvem da Supabase de graça.</li>
+                  <li>Início de namoro e diário totalmente compartilháveis.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <p className="font-bold text-gray-950 font-serif">Passo 1: Executar a tabela no SQL Editor do Supabase</p>
+                <p className="text-xs text-gray-500">
+                  Crie um projeto grátis no Supabase, vá em <strong>SQL Editor &gt; New Query</strong>, cole o código abaixo e clique em <strong>Run</strong>:
+                </p>
+                <div className="relative">
+                  <pre className="bg-gray-900 text-gray-100 p-3.5 rounded-xl font-mono text-[10px] overflow-x-auto max-h-40 leading-relaxed shadow-inner">
+                    {SUPABASE_SQL_SETUP}
+                  </pre>
+                  <button
+                    onClick={copySqlSetup}
+                    className="absolute right-2 top-2 bg-white/10 hover:bg-white/20 text-white hover:text-rose-200 px-2.5 py-1 rounded-md text-[10px] font-semibold cursor-pointer transition-all border border-white/10"
+                  >
+                    {copiedSql ? "Copiado!" : "Copiar SQL"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="font-bold text-gray-950 font-serif">Passo 2: Configurar variáveis de ambiente</p>
+                <p className="text-xs text-gray-500">
+                  Adicione as credenciais no arquivo <code>.env</code> ou nas configurações da plataforma onde hospedar o app:
+                </p>
+                <div className="bg-rose-50/50 p-3.5 rounded-xl border border-rose-100 text-[11px] font-mono space-y-1.5 text-gray-800">
+                  <p><strong>VITE_SUPABASE_URL</strong> = <span className="text-rose-700">"Sua URL de API do projeto Supabase"</span></p>
+                  <p><strong>VITE_SUPABASE_ANON_KEY</strong> = <span className="text-rose-700">"Sua Chave Anon Key do projeto Supabase"</span></p>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-100 p-3.5 rounded-xl text-xs text-amber-800 leading-relaxed font-light">
+                <strong>💡 Nota:</strong> Se as credenciais estiverem vazias, o aplicativo funciona perfeitamente salvando todos os seus dados localmente no navegador (localStorage). Quando configuradas, ele migra e sincroniza automaticamente pela nuvem!
+              </div>
+
+            </div>
+
+            {/* Modal footer */}
+            <div className="p-4 border-t border-rose-50 bg-gray-50 flex justify-end">
+              <button
+                onClick={() => setShowSupabaseGuide(false)}
+                className="bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl cursor-pointer shadow-md transition-colors"
+              >
+                Entendi!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
