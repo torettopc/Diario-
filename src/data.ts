@@ -36,14 +36,14 @@ export const DEFAULT_PHOTOS: Photo[] = [
   },
   {
     id: "photo_5",
-    title: "Chamego No Elevador 🛗",
+    title: "Saudades das nossas aventuras... ❤️",
     caption: "Aqueles flagras espelhados e fofos que nos fazem sorrir o dia inteiro.",
     defaultImage: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&q=80&w=600",
     placementHint: "Mirror selfie dele beijando sua bochecha espontaneamente no elevador."
   },
   {
     id: "photo_6",
-    title: "Nossa Sintonia de Verão ☀️",
+    title: "Amor rubro negro... ❤️🖤",
     caption: "Sol, calor, cumplicidade e a certeza de que somos o porto seguro um do outro.",
     defaultImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=600",
     placementHint: "Mirror selfie do casal de trajes de banho vermelhos em um momento descontraído."
@@ -64,7 +64,7 @@ export const DEFAULT_PHOTOS: Photo[] = [
   },
   {
     id: "photo_9",
-    title: "Um sorriso encantador ❤️",
+    title: "Minha Jenica ❤️",
     caption: "O dia brilha mais forte quando você sorri de volta para mim.",
     defaultImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600",
     placementHint: "Foto ensolarada de vocês bem colados ao ar livre com sorrisos radiantes."

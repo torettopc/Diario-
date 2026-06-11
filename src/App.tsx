@@ -89,11 +89,17 @@ export default function App() {
       if (p.id === "photo_3" && p.title === "Beijo Sob a Água 💦") {
         return { ...p, title: "Amor que vai além do beijo ❤️" };
       }
+      if (p.id === "photo_5" && p.title === "Chamego No Elevador 🛗") {
+        return { ...p, title: "Saudades das nossas aventuras... ❤️" };
+      }
+      if (p.id === "photo_6" && p.title === "Nossa Sintonia de Verão ☀️") {
+        return { ...p, title: "Amor rubro negro... ❤️🖤" };
+      }
       if (p.id === "photo_7" && p.title === "Noite de Brindes 🍷") {
         return { ...p, title: "Amanhecer ao seu lado ❤️" };
       }
-      if (p.id === "photo_9" && p.title === "Iluminados Pelo Sol 🌻") {
-        return { ...p, title: "Um sorriso encantador ❤️" };
+      if (p.id === "photo_9" && (p.title === "Iluminados Pelo Sol 🌻" || p.title === "Um sorriso encantador ❤️")) {
+        return { ...p, title: "Minha Jenica ❤️" };
       }
       return p;
     });
@@ -101,9 +107,11 @@ export default function App() {
     if (savedPhotos) {
       const hasOldPhoto1 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_1" && p.title === "Amor com o Manto Sagrado ❤️🖤");
       const hasOldPhoto3 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_3" && p.title === "Beijo Sob a Água 💦");
+      const hasOldPhoto5 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_5" && p.title === "Chamego No Elevador 🛗");
+      const hasOldPhoto6 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_6" && p.title === "Nossa Sintonia de Verão ☀️");
       const hasOldPhoto7 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_7" && p.title === "Noite de Brindes 🍷");
-      const hasOldPhoto9 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_9" && p.title === "Iluminados Pelo Sol 🌻");
-      if (hasOldPhoto1 || hasOldPhoto3 || hasOldPhoto7 || hasOldPhoto9) {
+      const hasOldPhoto9 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_9" && (p.title === "Iluminados Pelo Sol 🌻" || p.title === "Um sorriso encantador ❤️"));
+      if (hasOldPhoto1 || hasOldPhoto3 || hasOldPhoto5 || hasOldPhoto6 || hasOldPhoto7 || hasOldPhoto9) {
         localStorage.setItem("love_album_photos", JSON.stringify(migratedPhotos));
       }
     }
