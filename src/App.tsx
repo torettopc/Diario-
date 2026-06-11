@@ -401,7 +401,7 @@ VITE_FIREBASE_APP_ID="SEU_APP_ID"`;
                   <Cloud className="w-3 h-3 text-teal-500 fill-teal-100/30" />
                 )}
                 <span>
-                  {isSyncing ? "Sincronizando..." : syncSuccess === true ? "Sincronizado" : syncSuccess === false ? "Erro ao salvar" : "Nuvem Ativa"}
+                  {isSyncing ? "Sincronizando..." : syncSuccess === true ? "Nuvem Ativa" : syncSuccess === false ? "Erro ao salvar" : "Nuvem Ativa"}
                 </span>
                 {lastSyncTime && !isSyncing && (
                   <span className="text-[9px] opacity-70 hidden sm:inline">({lastSyncTime})</span>
