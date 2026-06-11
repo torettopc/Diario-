@@ -16,8 +16,8 @@ import {
   DEFAULT_FUTURE_PLANS, 
   DEFAULT_DECLARATION 
 } from "./data";
-import { getIsSupabaseConfigured, initializeRuntimeConfig } from "./supabaseClient";
-import { fetchLoveData, saveLoveData, SUPABASE_SQL_SETUP } from "./supabaseService";
+import { getIsFirebaseConfigured, initializeRuntimeConfig } from "./firebaseClient";
+import { fetchLoveData, saveLoveData } from "./firebaseService";
 import { 
   Heart, 
   Globe, 
@@ -44,10 +44,10 @@ export default function App() {
   const [shareUrl, setShareUrl] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
   const [showPwaTip, setShowPwaTip] = useState(false);
-  const [showSupabaseGuide, setShowSupabaseGuide] = useState(false);
-  const [copiedSql, setCopiedSql] = useState(false);
+  const [showFirebaseGuide, setShowFirebaseGuide] = useState(false);
+  const [copiedEnv, setCopiedEnv] = useState(false);
 
-  const [isConfigured, setIsConfigured] = useState(getIsSupabaseConfigured());
+  const [isConfigured, setIsConfigured] = useState(getIsFirebaseConfigured());
 
   // States with localStorage support
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -55,7 +55,7 @@ export default function App() {
   const [plans, setPlans] = useState<FuturePlan[]>([]);
   const [declaration, setDeclaration] = useState("");
 
-  // Supabase states
+  // Firebase states
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncSuccess, setSyncSuccess] = useState<boolean | null>(null);
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
@@ -116,8 +116,8 @@ export default function App() {
     });
   }, []);
 
-  // Fetch from Supabase on Unlock / Page Load if configured
-  const syncWithSupabase = async (
+  // Fetch from Firebase on Unlock / Page Load if configured
+  const syncWithFirebase = async (
     fallbackPhotos?: Photo[], 
     fallbackMilestones?: Milestone[], 
     fallbackPlans?: FuturePlan[], 
@@ -140,7 +140,7 @@ export default function App() {
         setLastSyncTime(new Date().toLocaleTimeString());
         setSyncSuccess(true);
       } else {
-        // First sync or table empty: Push current local values to bootstrap the cloud database
+        // First sync or collection empty: Push current local values to bootstrap the cloud database
         const pToSave = fallbackPhotos || photos.length ? photos : DEFAULT_PHOTOS;
         const mToSave = fallbackMilestones || milestones.length ? milestones : DEFAULT_MILESTONES;
         const plToSave = fallbackPlans || plans.length ? plans : DEFAULT_FUTURE_PLANS;
@@ -160,7 +160,7 @@ export default function App() {
         }
       }
     } catch (err) {
-      console.warn("Error connecting with Supabase", err);
+      console.warn("Error connecting with Firebase", err);
       setSyncSuccess(false);
     } finally {
       setIsSyncing(false);
@@ -180,7 +180,7 @@ export default function App() {
       const localPlans = savedPlans ? JSON.parse(savedPlans) : DEFAULT_FUTURE_PLANS;
       const localDecl = savedDecl !== null ? savedDecl : DEFAULT_DECLARATION;
 
-      syncWithSupabase(localPhotos, localMilestones, localPlans, localDecl);
+      syncWithFirebase(localPhotos, localMilestones, localPlans, localDecl);
     }
   }, [isUnlocked, isConfigured]);
 
@@ -199,7 +199,7 @@ export default function App() {
         });
         setSyncSuccess(success);
       } catch (err) {
-        console.warn("Failed to update photos to Supabase", err);
+        console.warn("Failed to update photos to Firebase", err);
         setSyncSuccess(false);
       } finally {
         setIsSyncing(false);
@@ -223,7 +223,7 @@ export default function App() {
         });
         setSyncSuccess(success);
       } catch (err) {
-        console.warn("Failed to update milestones to Supabase", err);
+        console.warn("Failed to update milestones to Firebase", err);
         setSyncSuccess(false);
       } finally {
         setIsSyncing(false);
@@ -247,7 +247,7 @@ export default function App() {
         });
         setSyncSuccess(success);
       } catch (err) {
-        console.warn("Failed to update plans to Supabase", err);
+        console.warn("Failed to update plans to Firebase", err);
         setSyncSuccess(false);
       } finally {
         setIsSyncing(false);
@@ -271,7 +271,7 @@ export default function App() {
         });
         setSyncSuccess(success);
       } catch (err) {
-        console.warn("Failed to update declaration to Supabase", err);
+        console.warn("Failed to update declaration to Firebase", err);
         setSyncSuccess(false);
       } finally {
         setIsSyncing(false);
@@ -326,10 +326,16 @@ export default function App() {
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
-  const copySqlSetup = () => {
-    navigator.clipboard.writeText(SUPABASE_SQL_SETUP);
-    setCopiedSql(true);
-    setTimeout(() => setCopiedSql(false), 2500);
+  const copyEnvSetup = () => {
+    const exampleEnv = `VITE_FIREBASE_API_KEY="SUA_CHAVE_AQUI"
+VITE_FIREBASE_PROJECT_ID="SEU_ID_DE_PROJETO"
+VITE_FIREBASE_AUTH_DOMAIN="SEU_AUTH_DOMAIN"
+VITE_FIREBASE_STORAGE_BUCKET="SEU_STORAGE_BUCKET"
+VITE_FIREBASE_MESSAGES_SENDER_ID="SEU_SENDER_ID"
+VITE_FIREBASE_APP_ID="SEU_APP_ID"`;
+    navigator.clipboard.writeText(exampleEnv);
+    setCopiedEnv(true);
+    setTimeout(() => setCopiedEnv(false), 2500);
   };
 
   if (!isUnlocked) {
@@ -371,10 +377,10 @@ export default function App() {
           {/* Sync status & settings controller */}
           <div className="flex items-center gap-2">
             
-            {/* Supabase status display */}
+            {/* Firebase status display */}
             {isConfigured ? (
               <button
-                onClick={() => syncWithSupabase()}
+                onClick={() => syncWithFirebase()}
                 disabled={isSyncing}
                 className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold select-none cursor-pointer border transition-colors ${
                   isSyncing
@@ -385,7 +391,7 @@ export default function App() {
                     ? "bg-rose-50 text-rose-600 border-rose-200"
                     : "bg-teal-50 hover:bg-teal-100/80 text-teal-700 border-teal-200"
                 }`}
-                title={isSyncing ? "Sincronizando com Supabase..." : "Conexão com Supabase Ativa. Clique para atualizar!"}
+                title={isSyncing ? "Sincronizando com Firebase..." : "Conexão com Firebase Ativa. Clique para atualizar!"}
               >
                 {isSyncing ? (
                   <Loader2 className="w-3 h-3 animate-spin text-amber-500" />
@@ -403,9 +409,9 @@ export default function App() {
               </button>
             ) : (
               <button
-                onClick={() => setShowSupabaseGuide(true)}
+                onClick={() => setShowFirebaseGuide(true)}
                 className="flex items-center space-x-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100/80 border border-rose-200/50 rounded-full text-xs font-semibold text-rose-700 cursor-pointer transition-colors"
-                title="Supabase inativo. Clique para ver instruções de conexão!"
+                title="Firebase inativo. Clique para ver instruções de conexão!"
               >
                 <CloudOff className="w-3 h-3" />
                 <span>Nuvem Inativa</span>
@@ -482,13 +488,13 @@ export default function App() {
       {/* 3. DYNAMIC CONTENT CANVAS */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
         
-        {/* Offline notice when Supabase is config but we have an error or offline state */}
+        {/* Offline notice when Firebase is config but we have an error or offline state */}
         {isConfigured && syncSuccess === false && (
           <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-xs text-amber-800 shadow-sm animate-fadeIn max-w-md mx-auto text-left">
             <span>⚠️</span>
             <div>
               <p className="font-bold">Modo Offline Ativado Temporariamente</p>
-              <p className="opacity-90">Não foi possível conectar à sua nuvem Supabase. Suas alterações estão salvas no celular e sincronizarão assim que a rede voltar!</p>
+              <p className="opacity-90">Não foi possível conectar à sua nuvem Firebase. Suas alterações estão salvas no celular e sincronizarão assim que a rede voltar!</p>
             </div>
           </div>
         )}
@@ -604,11 +610,11 @@ export default function App() {
                 <span className="text-rose-200 hidden sm:inline">|</span>
 
                 <button
-                  onClick={() => setShowSupabaseGuide(true)}
+                  onClick={() => setShowFirebaseGuide(true)}
                   className="inline-flex items-center gap-1.5 text-[11px] text-teal-600 hover:text-teal-700 hover:underline cursor-pointer font-semibold transition animate-pulse-slow"
                 >
                   <Database className="w-3.5 h-3.5" />
-                  <span>Configurar Sincronização em Nuvem (Supabase)</span>
+                  <span>Configurar Sincronização em Nuvem (Firebase)</span>
                 </button>
               </div>
 
@@ -659,17 +665,17 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Supabase connection guide custom Modal */}
-      {showSupabaseGuide && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-fadeIn" onClick={() => setShowSupabaseGuide(false)}>
+      {/* Firebase connection guide custom Modal */}
+      {showFirebaseGuide && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-fadeIn" onClick={() => setShowFirebaseGuide(false)}>
           <div className="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-rose-100 flex flex-col" onClick={(e) => e.stopPropagation()}>
             {/* Modal header */}
             <div className="p-6 border-b border-rose-50 flex justify-between items-center bg-rose-50/30">
               <div className="flex items-center space-x-2">
                 <Database className="w-5 h-5 text-teal-600 animate-pulse-slow" />
-                <h3 className="font-serif text-lg font-bold text-rose-950">Conexão com Nuvem Supabase</h3>
+                <h3 className="font-serif text-lg font-bold text-rose-950">Conexão com Nuvem Firebase</h3>
               </div>
-              <button onClick={() => setShowSupabaseGuide(false)} className="text-gray-400 hover:text-rose-600 p-1.5 hover:bg-rose-50 rounded-full transition-colors cursor-pointer">
+              <button onClick={() => setShowFirebaseGuide(false)} className="text-gray-400 hover:text-rose-600 p-1.5 hover:bg-rose-50 rounded-full transition-colors cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -677,47 +683,55 @@ export default function App() {
             {/* Modal Body */}
             <div className="p-6 space-y-5 text-gray-700 text-xs sm:text-sm text-left">
               <p className="leading-relaxed">
-                Adicione sincronização automática em tempo real ao diário! Com o Supabase ativo, qualquer foto enviada ou texto editado no <strong>celular</strong> aparecerá imediatamente no <strong>computador</strong> (e vice-versa).
+                Adicione sincronização automática em tempo real ao diário! Com o Firebase ativo, qualquer foto enviada ou texto editado no <strong>celular</strong> aparecerá imediatamente no <strong>computador</strong> (e vice-versa).
               </p>
 
               <div className="p-4 bg-teal-50 border border-teal-100 rounded-2xl space-y-2">
                 <p className="font-bold text-teal-900 flex items-center gap-1">
                   <Sparkles className="w-4 h-4 text-teal-600" />
-                  Benefícios do Supabase Ativo:
+                  Benefícios do Firebase Ativo:
                 </p>
                 <ul className="list-disc pl-5 space-y-1 text-teal-950 text-xs font-medium">
                   <li>Sincronização imediata entre múltiplos telefones e computadores.</li>
-                  <li>Dados sempre seguros na nuvem da Supabase de graça.</li>
+                  <li>Dados sempre seguros na coleção <strong>universo_amor</strong> do Firestore de graça.</li>
                   <li>Início de namoro e diário totalmente compartilháveis.</li>
                 </ul>
               </div>
 
-              <div className="space-y-2">
-                <p className="font-bold text-gray-950 font-serif">Passo 1: Executar a tabela no SQL Editor do Supabase</p>
+              <div className="space-y-4">
+                <p className="font-bold text-gray-950 font-serif">Onde configurar suas credenciais do Firebase:</p>
                 <p className="text-xs text-gray-500">
-                  Crie um projeto grátis no Supabase, vá em <strong>SQL Editor &gt; New Query</strong>, cole o código abaixo e clique em <strong>Run</strong>:
+                  Crie um projeto no <strong>Firebase Console</strong>, vá nas Configurações do Projeto, adicione um App Web e configure de uma das duas formas abaixo:
                 </p>
-                <div className="relative">
-                  <pre className="bg-gray-900 text-gray-100 p-3.5 rounded-xl font-mono text-[10px] overflow-x-auto max-h-40 leading-relaxed shadow-inner">
-                    {SUPABASE_SQL_SETUP}
-                  </pre>
-                  <button
-                    onClick={copySqlSetup}
-                    className="absolute right-2 top-2 bg-white/10 hover:bg-white/20 text-white hover:text-rose-200 px-2.5 py-1 rounded-md text-[10px] font-semibold cursor-pointer transition-all border border-white/10"
-                  >
-                    {copiedSql ? "Copiado!" : "Copiar SQL"}
-                  </button>
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <p className="font-bold text-gray-950 font-serif">Passo 2: Configurar variáveis de ambiente</p>
-                <p className="text-xs text-gray-500">
-                  Adicione as credenciais no arquivo <code>.env</code> ou nas configurações da plataforma onde hospedar o app:
-                </p>
-                <div className="bg-rose-50/50 p-3.5 rounded-xl border border-rose-100 text-[11px] font-mono space-y-1.5 text-gray-800">
-                  <p><strong>VITE_SUPABASE_URL</strong> = <span className="text-rose-700">"Sua URL de API do projeto Supabase"</span></p>
-                  <p><strong>VITE_SUPABASE_ANON_KEY</strong> = <span className="text-rose-700">"Sua Chave Anon Key do projeto Supabase"</span></p>
+                <div className="space-y-1 rounded-xl bg-gray-50 p-3.5 border border-rose-100 text-xs">
+                  <p className="font-semibold text-rose-900">Opção A: No arquivo local de clientes</p>
+                  <p className="text-gray-600">
+                    Abra o arquivo <code>/src/firebaseClient.ts</code> no editor de código e cole os dados diretamente nos campos indicados na variável <code>firebaseConfig</code>!
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="font-semibold text-rose-900">Opção B: Nas variáveis de ambiente (.env)</p>
+                  <p className="text-gray-600">
+                    Crie ou edite o arquivo <code>.env</code> na raiz do projeto (ou configure as variáveis na sua plataforma de hospedagem) e adicione as seguintes chaves:
+                  </p>
+                  <div className="relative">
+                    <pre className="bg-gray-900 text-gray-100 p-3.5 rounded-xl font-mono text-[10px] overflow-x-auto leading-relaxed shadow-inner">
+{`VITE_FIREBASE_API_KEY="SUA_API_KEY"
+VITE_FIREBASE_PROJECT_ID="SEU_PROJECT_ID"
+VITE_FIREBASE_AUTH_DOMAIN="SUA_AUTH_DOMAIN"
+VITE_FIREBASE_STORAGE_BUCKET="SEU_STORAGE_BUCKET"
+VITE_FIREBASE_MESSAGES_SENDER_ID="SENDER_ID"
+VITE_FIREBASE_APP_ID="SEU_APP_ID"`}
+                    </pre>
+                    <button
+                      onClick={copyEnvSetup}
+                      className="absolute right-2 top-2 bg-white/10 hover:bg-white/20 text-white hover:text-rose-200 px-2.5 py-1 rounded-md text-[10px] font-semibold cursor-pointer transition-all border border-white/10"
+                    >
+                      {copiedEnv ? "Copiado!" : "Copiar .env"}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -730,7 +744,7 @@ export default function App() {
             {/* Modal footer */}
             <div className="p-4 border-t border-rose-50 bg-gray-50 flex justify-end">
               <button
-                onClick={() => setShowSupabaseGuide(false)}
+                onClick={() => setShowFirebaseGuide(false)}
                 className="bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold px-5 py-2.5 rounded-xl cursor-pointer shadow-md transition-colors"
               >
                 Entendi!

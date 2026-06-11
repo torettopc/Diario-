@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "LoveUniverse": {
+      "title": "LoveUniverse",
+      "description": "Shared romantic data for the couple including photos, milestones, plans, and the main declaration",
+      "type": "object",
+      "properties": {
+        "photos": {
+          "type": "array",
+          "description": "List of romantic story photos with caption and optional user uploads"
+        },
+        "milestones": {
+          "type": "array",
+          "description": "Historical dates and memories of the relationship"
+        },
+        "plans": {
+          "type": "array",
+          "description": "Future plans or items the couple intends to accomplish together"
+        },
+        "declaration": {
+          "type": "string",
+          "description": "Main love letter text"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of the last save"
+        }
+      },
+      "required": ["photos", "milestones", "plans", "declaration", "updated_at"]
+    }
+  },
+  "firestore": {
+    "universo_amor/{docId}": {
+      "schema": "LoveUniverse",
+      "description": "The custom shared space for the couple containing all timeline cards, notes, plans, and pictures."
+    }
+  }
+}

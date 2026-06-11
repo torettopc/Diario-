@@ -21,8 +21,12 @@ async function startServer() {
   // 1. Core Config Endpoint for dynamic runtime variables injection
   app.get("/api/config", (req, res) => {
     res.json({
-      supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "",
-      supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "",
+      firebaseApiKey: process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY || "",
+      firebaseAuthDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || process.env.FIREBASE_AUTH_DOMAIN || "",
+      firebaseProjectId: process.env.VITE_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || "",
+      firebaseStorageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || process.env.FIREBASE_STORAGE_BUCKET || "",
+      firebaseMessagingSenderId: process.env.VITE_FIREBASE_MESSAGES_SENDER_ID || process.env.FIREBASE_MESSAGES_SENDER_ID || "",
+      firebaseAppId: process.env.VITE_FIREBASE_APP_ID || process.env.FIREBASE_APP_ID || "",
     });
   });
 

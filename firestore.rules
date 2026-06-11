@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // universo_amor rule definitions
+    match /universo_amor/{docId} {
+      allow read: if true;
+      allow write: if docId == "nosso_universo" 
+                   && incoming().keys().hasAll(["photos", "milestones", "plans", "declaration", "updated_at"])
+                   && incoming().keys().size() == 5
+                   && incoming().declaration is string
+                   && incoming().declaration.size() <= 50000
+                   && incoming().updated_at is string
+                   && incoming().updated_at.size() <= 100
+                   && incoming().photos is list
+                   && incoming().photos.size() <= 200
+                   && incoming().milestones is list
+                   && incoming().milestones.size() <= 200
+                   && incoming().plans is list
+                   && incoming().plans.size() <= 200;
+    }
+  }
+
+  // Helper functions
+  function incoming() {
+    return request.resource.data;
+  }
+}
