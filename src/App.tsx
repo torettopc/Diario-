@@ -160,7 +160,7 @@ export default function App() {
         }
       }
     } catch (err) {
-      console.error("Error connecting with Supabase", err);
+      console.warn("Error connecting with Supabase", err);
       setSyncSuccess(false);
     } finally {
       setIsSyncing(false);
@@ -190,16 +190,22 @@ export default function App() {
     localStorage.setItem("love_album_photos", JSON.stringify(updated));
     if (isConfigured) {
       setIsSyncing(true);
-      const success = await saveLoveData({
-        photos: updated,
-        milestones,
-        plans,
-        declaration
-      });
-      setSyncSuccess(success);
-      setIsSyncing(false);
-      setLastSyncTime(new Date().toLocaleTimeString());
-      setTimeout(() => setSyncSuccess(null), 3000);
+      try {
+        const success = await saveLoveData({
+          photos: updated,
+          milestones,
+          plans,
+          declaration
+        });
+        setSyncSuccess(success);
+      } catch (err) {
+        console.warn("Failed to update photos to Supabase", err);
+        setSyncSuccess(false);
+      } finally {
+        setIsSyncing(false);
+        setLastSyncTime(new Date().toLocaleTimeString());
+        setTimeout(() => setSyncSuccess(null), 3000);
+      }
     }
   };
 
@@ -208,16 +214,22 @@ export default function App() {
     localStorage.setItem("love_album_milestones", JSON.stringify(updated));
     if (isConfigured) {
       setIsSyncing(true);
-      const success = await saveLoveData({
-        photos,
-        milestones: updated,
-        plans,
-        declaration
-      });
-      setSyncSuccess(success);
-      setIsSyncing(false);
-      setLastSyncTime(new Date().toLocaleTimeString());
-      setTimeout(() => setSyncSuccess(null), 3000);
+      try {
+        const success = await saveLoveData({
+          photos,
+          milestones: updated,
+          plans,
+          declaration
+        });
+        setSyncSuccess(success);
+      } catch (err) {
+        console.warn("Failed to update milestones to Supabase", err);
+        setSyncSuccess(false);
+      } finally {
+        setIsSyncing(false);
+        setLastSyncTime(new Date().toLocaleTimeString());
+        setTimeout(() => setSyncSuccess(null), 3000);
+      }
     }
   };
 
@@ -226,16 +238,22 @@ export default function App() {
     localStorage.setItem("love_album_plans", JSON.stringify(updated));
     if (isConfigured) {
       setIsSyncing(true);
-      const success = await saveLoveData({
-        photos,
-        milestones,
-        plans: updated,
-        declaration
-      });
-      setSyncSuccess(success);
-      setIsSyncing(false);
-      setLastSyncTime(new Date().toLocaleTimeString());
-      setTimeout(() => setSyncSuccess(null), 3000);
+      try {
+        const success = await saveLoveData({
+          photos,
+          milestones,
+          plans: updated,
+          declaration
+        });
+        setSyncSuccess(success);
+      } catch (err) {
+        console.warn("Failed to update plans to Supabase", err);
+        setSyncSuccess(false);
+      } finally {
+        setIsSyncing(false);
+        setLastSyncTime(new Date().toLocaleTimeString());
+        setTimeout(() => setSyncSuccess(null), 3000);
+      }
     }
   };
 
@@ -244,16 +262,22 @@ export default function App() {
     localStorage.setItem("love_album_declaration", updated);
     if (isConfigured) {
       setIsSyncing(true);
-      const success = await saveLoveData({
-        photos,
-        milestones,
-        plans,
-        declaration: updated
-      });
-      setSyncSuccess(success);
-      setIsSyncing(false);
-      setLastSyncTime(new Date().toLocaleTimeString());
-      setTimeout(() => setSyncSuccess(null), 3000);
+      try {
+        const success = await saveLoveData({
+          photos,
+          milestones,
+          plans,
+          declaration: updated
+        });
+        setSyncSuccess(success);
+      } catch (err) {
+        console.warn("Failed to update declaration to Supabase", err);
+        setSyncSuccess(false);
+      } finally {
+        setIsSyncing(false);
+        setLastSyncTime(new Date().toLocaleTimeString());
+        setTimeout(() => setSyncSuccess(null), 3000);
+      }
     }
   };
 

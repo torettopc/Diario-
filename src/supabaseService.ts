@@ -53,7 +53,7 @@ export async function fetchLoveData(): Promise<LoveDataPayload | null> {
       };
     }
   } catch (err: any) {
-    console.error("Failed to fetch love data from Supabase:", err);
+    console.warn("Failed to fetch love data from Supabase:", err);
     throw err;
   }
 
@@ -92,7 +92,7 @@ export async function saveLoveData(payload: LoveDataPayload): Promise<boolean> {
 
     return true;
   } catch (err: any) {
-    console.error("Failed to save love data to Supabase:", err);
+    console.warn("Failed to save love data to Supabase:", err);
     throw err;
   }
 }
