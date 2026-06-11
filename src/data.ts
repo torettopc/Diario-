@@ -43,7 +43,7 @@ export const DEFAULT_PHOTOS: Photo[] = [
   },
   {
     id: "photo_6",
-    title: "Amor rubro negro... ❤️🖤",
+    title: "Amor rubro negro ❤️🖤",
     caption: "Sol, calor, cumplicidade e a certeza de que somos o porto seguro um do outro.",
     defaultImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=600",
     placementHint: "Mirror selfie do casal de trajes de banho vermelhos em um momento descontraído."

@@ -89,16 +89,16 @@ export default function App() {
       if (p.id === "photo_3" && p.title === "Beijo Sob a Água 💦") {
         return { ...p, title: "Amor que vai além do beijo ❤️" };
       }
-      if (p.id === "photo_5" && p.title === "Chamego No Elevador 🛗") {
+      if (p.id === "photo_5" && (p.title === "Chamego No Elevador 🛗" || p.title === "Saudades das nossas aventuras... (Coração)" || p.title === "Saudades das nossas aventuras... (coração)")) {
         return { ...p, title: "Saudades das nossas aventuras... ❤️" };
       }
-      if (p.id === "photo_6" && p.title === "Nossa Sintonia de Verão ☀️") {
-        return { ...p, title: "Amor rubro negro... ❤️🖤" };
+      if (p.id === "photo_6" && (p.title === "Nossa Sintonia de Verão ☀️" || p.title === "Amor rubro negro... ❤️🖤" || p.title === "Amor rubro negro (coração vermelho e um preto)")) {
+        return { ...p, title: "Amor rubro negro ❤️🖤" };
       }
-      if (p.id === "photo_7" && p.title === "Noite de Brindes 🍷") {
+      if (p.id === "photo_7" && (p.title === "Noite de Brindes 🍷" || p.title === "Amanhecer ao seu lado (coração)" || p.title === "Amanhecer ao seu lado (Coração)")) {
         return { ...p, title: "Amanhecer ao seu lado ❤️" };
       }
-      if (p.id === "photo_9" && (p.title === "Iluminados Pelo Sol 🌻" || p.title === "Um sorriso encantador ❤️")) {
+      if (p.id === "photo_9" && (p.title === "Iluminados Pelo Sol 🌻" || p.title === "Um sorriso encantador ❤️" || p.title === "Minha Jenica (Coração)" || p.title === "Minha Jenica (coração)")) {
         return { ...p, title: "Minha Jenica ❤️" };
       }
       return p;
@@ -107,10 +107,10 @@ export default function App() {
     if (savedPhotos) {
       const hasOldPhoto1 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_1" && p.title === "Amor com o Manto Sagrado ❤️🖤");
       const hasOldPhoto3 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_3" && p.title === "Beijo Sob a Água 💦");
-      const hasOldPhoto5 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_5" && p.title === "Chamego No Elevador 🛗");
-      const hasOldPhoto6 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_6" && p.title === "Nossa Sintonia de Verão ☀️");
-      const hasOldPhoto7 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_7" && p.title === "Noite de Brindes 🍷");
-      const hasOldPhoto9 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_9" && (p.title === "Iluminados Pelo Sol 🌻" || p.title === "Um sorriso encantador ❤️"));
+      const hasOldPhoto5 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_5" && (p.title === "Chamego No Elevador 🛗" || p.title === "Saudades das nossas aventuras... (Coração)" || p.title === "Saudades das nossas aventuras... (coração)"));
+      const hasOldPhoto6 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_6" && (p.title === "Nossa Sintonia de Verão ☀️" || p.title === "Amor rubro negro... ❤️🖤" || p.title === "Amor rubro negro (coração vermelho e um preto)"));
+      const hasOldPhoto7 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_7" && (p.title === "Noite de Brindes 🍷" || p.title === "Amanhecer ao seu lado (coração)" || p.title === "Amanhecer ao seu lado (Coração)"));
+      const hasOldPhoto9 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_9" && (p.title === "Iluminados Pelo Sol 🌻" || p.title === "Um sorriso encantador ❤️" || p.title === "Minha Jenica (Coração)" || p.title === "Minha Jenica (coração)"));
       if (hasOldPhoto1 || hasOldPhoto3 || hasOldPhoto5 || hasOldPhoto6 || hasOldPhoto7 || hasOldPhoto9) {
         localStorage.setItem("love_album_photos", JSON.stringify(migratedPhotos));
       }
