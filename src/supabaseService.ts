@@ -31,7 +31,7 @@ export async function fetchLoveData(): Promise<LoveDataPayload | null> {
 
   try {
     const { data, error } = await client
-      .from("love_universe")
+      .from("universo_amor")
       .select("photos, milestones, plans, declaration")
       .eq("id", RECORD_ID)
       .maybeSingle();
@@ -74,7 +74,7 @@ export async function saveLoveData(payload: LoveDataPayload): Promise<boolean> {
 
   try {
     const { error } = await client
-      .from("love_universe")
+      .from("universo_amor")
       .upsert({
         id: RECORD_ID,
         photos: payload.photos,
@@ -102,7 +102,7 @@ export async function saveLoveData(payload: LoveDataPayload): Promise<boolean> {
  */
 export const SUPABASE_SQL_SETUP = `-- Execute este comando no SQL Editor do seu projeto Supabase:
 
-CREATE TABLE IF NOT EXISTS love_universe (
+CREATE TABLE IF NOT EXISTS universo_amor (
   id TEXT PRIMARY KEY,
   photos JSONB,
   milestones JSONB,
@@ -112,11 +112,11 @@ CREATE TABLE IF NOT EXISTS love_universe (
 );
 
 -- Ativar RLS (Row Level Security)
-ALTER TABLE love_universe ENABLE ROW LEVEL SECURITY;
+ALTER TABLE universo_amor ENABLE ROW LEVEL SECURITY;
 
 -- Criar política de acesso público total (para facilitar o compartilhamento)
 CREATE POLICY "Acesso publico geral" 
-  ON love_universe 
+  ON universo_amor 
   FOR ALL 
   USING (true) 
   WITH CHECK (true);`;

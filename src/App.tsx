@@ -182,7 +182,7 @@ export default function App() {
 
       syncWithSupabase(localPhotos, localMilestones, localPlans, localDecl);
     }
-  }, [isUnlocked]);
+  }, [isUnlocked, isConfigured]);
 
   // Sync states to localStorage and Supabase (write-through cache style)
   const handleUpdatePhotos = async (updated: Photo[]) => {
