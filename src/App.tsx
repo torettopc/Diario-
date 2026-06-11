@@ -89,13 +89,21 @@ export default function App() {
       if (p.id === "photo_3" && p.title === "Beijo Sob a Água 💦") {
         return { ...p, title: "Amor que vai além do beijo ❤️" };
       }
+      if (p.id === "photo_7" && p.title === "Noite de Brindes 🍷") {
+        return { ...p, title: "Amanhecer ao seu lado ❤️" };
+      }
+      if (p.id === "photo_9" && p.title === "Iluminados Pelo Sol 🌻") {
+        return { ...p, title: "Um sorriso encantador ❤️" };
+      }
       return p;
     });
     setPhotos(migratedPhotos);
     if (savedPhotos) {
       const hasOldPhoto1 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_1" && p.title === "Amor com o Manto Sagrado ❤️🖤");
       const hasOldPhoto3 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_3" && p.title === "Beijo Sob a Água 💦");
-      if (hasOldPhoto1 || hasOldPhoto3) {
+      const hasOldPhoto7 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_7" && p.title === "Noite de Brindes 🍷");
+      const hasOldPhoto9 = JSON.parse(savedPhotos).some((p: any) => p.id === "photo_9" && p.title === "Iluminados Pelo Sol 🌻");
+      if (hasOldPhoto1 || hasOldPhoto3 || hasOldPhoto7 || hasOldPhoto9) {
         localStorage.setItem("love_album_photos", JSON.stringify(migratedPhotos));
       }
     }

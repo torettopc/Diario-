@@ -50,7 +50,7 @@ export const DEFAULT_PHOTOS: Photo[] = [
   },
   {
     id: "photo_7",
-    title: "Noite de Brindes 🍷",
+    title: "Amanhecer ao seu lado ❤️",
     caption: "Cada risada solta e cada comemoração ao lado de quem faz a minha vida colorida.",
     defaultImage: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=600",
     placementHint: "Selfie de vocês à noite em um bar ou show brindando com copos na mão."
@@ -64,7 +64,7 @@ export const DEFAULT_PHOTOS: Photo[] = [
   },
   {
     id: "photo_9",
-    title: "Iluminados Pelo Sol 🌻",
+    title: "Um sorriso encantador ❤️",
     caption: "O dia brilha mais forte quando você sorri de volta para mim.",
     defaultImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600",
     placementHint: "Foto ensolarada de vocês bem colados ao ar livre com sorrisos radiantes."
