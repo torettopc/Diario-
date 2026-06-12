@@ -242,10 +242,6 @@ export default function PhotoAlbumSection({ photos, onUpdatePhoto }: PhotoAlbumS
                       </button>
                     </div>
                   )}
-
-                  <div className="mt-4 pt-3 border-t border-rose-50 text-[10px] text-gray-400 leading-tight">
-                    <span className="font-semibold text-rose-400">Sugestão:</span> {photo.placementHint}
-                  </div>
                 </div>
               </div>
             );
@@ -313,12 +309,43 @@ export default function PhotoAlbumSection({ photos, onUpdatePhoto }: PhotoAlbumS
 
           {/* Carousel Caption beneath */}
           <div className="p-5 text-center bg-white space-y-2 text-gray-700">
-            <p className="font-serif italic text-base px-2">
-              "{photos[carouselIndex].caption}"
-            </p>
-            <div className="text-[10px] text-gray-400 bg-rose-50/50 inline-block px-3 py-1.5 rounded-full border border-rose-100 max-w-full truncate">
-              💡 {photos[carouselIndex].placementHint}
-            </div>
+            {editingCardId === photos[carouselIndex].id ? (
+              <div className="space-y-2 w-full max-w-sm mx-auto" onClick={(e) => e.stopPropagation()}>
+                <textarea
+                  value={tempCaption}
+                  onChange={(e) => setTempCaption(e.target.value)}
+                  className="w-full text-xs text-gray-700 p-2 border border-rose-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-rose-400 text-center"
+                  rows={2}
+                />
+                <div className="flex justify-end space-x-2">
+                  <button
+                    onClick={() => setEditingCardId(null)}
+                    className="px-2 py-1 text-[10px] text-gray-500 hover:bg-gray-100 rounded cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={(e) => saveCaption(photos[carouselIndex].id, e)}
+                    className="px-2 py-1 text-[10px] bg-rose-500 text-white rounded flex items-center gap-1 cursor-pointer"
+                  >
+                    <Check className="w-3 h-3" /> Salvar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-start justify-center gap-1.5 max-w-sm mx-auto">
+                <p className="font-serif italic text-base px-2 text-gray-700 flex-1 leading-relaxed">
+                  "{photos[carouselIndex].caption}"
+                </p>
+                <button
+                  onClick={(e) => startEditingCaption(photos[carouselIndex], e)}
+                  className="text-gray-400 hover:text-rose-500 p-1 rounded-md hover:bg-rose-50/50 cursor-pointer self-center transition-colors"
+                  title="Editar Legenda"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -387,9 +414,6 @@ export default function PhotoAlbumSection({ photos, onUpdatePhoto }: PhotoAlbumS
             </h4>
             <p className="text-sm font-light italic max-w-lg mx-auto">
               "{photos[lightboxIndex].caption}"
-            </p>
-            <p className="text-[10px] text-white/50 max-w-md mx-auto">
-              Dica de imagem: {photos[lightboxIndex].placementHint}
             </p>
           </div>
         </div>
